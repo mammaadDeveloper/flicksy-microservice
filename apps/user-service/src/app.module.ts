@@ -23,9 +23,9 @@ import { UsersModule } from './modules/users/users.module';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         url: configService.get('database.url'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: configService.get<boolean>('database.synchronize'),
-        logging: true,
+        entities: [__dirname + '/**/**/*.entity{.ts,.js}'],
+        synchronize: true,
+        logging: false,
         autoLoadEntities: true,
       }),
     }),
