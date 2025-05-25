@@ -24,7 +24,7 @@ import { UsersModule } from './modules/users/users.module';
         type: 'postgres',
         url: configService.get('database.url'),
         entities: [__dirname + '/**/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: configService.get<boolean>('database.synchronize'),
         logging: false,
         autoLoadEntities: true,
       }),
