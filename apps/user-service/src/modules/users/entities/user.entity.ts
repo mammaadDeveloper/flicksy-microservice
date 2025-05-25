@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { PersonalAccessEntity } from "src/modules/tokens/entities/token.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('users')
 export class UserEntity{
@@ -16,6 +17,9 @@ export class UserEntity{
 
     @Column({type: 'varchar', length: 100})
     password: string;
+
+    @OneToMany(() => PersonalAccessEntity, token => token.user)
+    tokens: PersonalAccessEntity[];
 
     @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
