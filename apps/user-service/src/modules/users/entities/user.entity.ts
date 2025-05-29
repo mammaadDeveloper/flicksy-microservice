@@ -1,5 +1,6 @@
 import { PersonalAccessEntity } from "src/modules/tokens/entities/token.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { hashString } from "src/shared/utils/hash.util";
+import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('users')
 export class UserEntity{
@@ -9,11 +10,11 @@ export class UserEntity{
     @Column({type: 'varchar', length: 20})
     username: string;
 
-    @Column({type: 'varchar', length: 20, unique: true})
-    phone: string;
+    @Column({type: 'varchar', length: 20, nullable: true, unique: true})
+    phone?: string;
 
-    @Column({type: 'varchar', length: 30, unique: true})
-    email: string;
+    @Column({type: 'varchar', length: 30, nullable: true, unique: true})
+    email?: string;
 
     @Column({type: 'varchar', length: 100})
     password: string;
@@ -29,4 +30,9 @@ export class UserEntity{
 
     @DeleteDateColumn({name: 'deleted_at'})
     deletedAt: Date | null;
+
+    @BeforeInsert()
+    hashPassword(){
+        this.password = hashString(this.password);
+    }
 }

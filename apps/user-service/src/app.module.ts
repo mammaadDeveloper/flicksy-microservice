@@ -33,6 +33,6 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     TokensModule,
     GrpcModule,
-  ],
+  ]
 })
 export class AppModule {}

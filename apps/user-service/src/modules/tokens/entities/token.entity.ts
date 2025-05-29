@@ -1,5 +1,6 @@
 import { UserEntity } from "src/modules/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent, UpdateDateColumn } from "typeorm";
+import { hashString } from "src/shared/utils/hash.util";
+import { BeforeInsert, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent, UpdateDateColumn } from "typeorm";
 
 @Tree('materialized-path')
 @Entity('personal_access_tokens')
@@ -9,6 +10,9 @@ export class PersonalAccessEntity{
 
     @Column({type: 'enum', enum: ['access', 'refresh'], default: 'refresh'})
     type: 'access' | 'refresh';
+
+    @Column({name: 'jwt_id', type: 'uuid', unique: true})
+    jti: string;
 
     @Column()
     token: string;
@@ -21,6 +25,7 @@ export class PersonalAccessEntity{
     children: PersonalAccessEntity[];
 
     @TreeParent()
+    @JoinColumn({name: 'parent_id'})
     parent: PersonalAccessEntity;
 
     @Column({name: 'is_revoked', default: false})
@@ -37,4 +42,9 @@ export class PersonalAccessEntity{
 
     @UpdateDateColumn({name: 'updated_at'})
     updatedAt: Date;
+
+    @BeforeInsert()
+    hashToken(){
+        this.token = hashString(this.token);
+    }
 }
