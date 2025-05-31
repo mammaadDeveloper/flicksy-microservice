@@ -13,8 +13,6 @@ import { TokenRepositoryService } from './services/repository.service';
 export class TokensService {
   constructor(
     private readonly configService: ConfigService,
-    @InjectRepository(PersonalAccessEntity)
-    private readonly tokenRepo: Repository<PersonalAccessEntity>,
     private readonly jwtService: JwtService,
     private readonly repository: TokenRepositoryService,
   ) {}

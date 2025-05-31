@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -12,13 +13,14 @@ import { SigninV1Dto } from './dto/signin.dto';
 import { AuthService } from './auth.service';
 import { SignupV1Dto } from './dto/signup.dto';
 import { Request } from 'express';
+import { UsersService } from '../users/users.service';
 
 @Controller({
   version: '1',
   path: 'auth',
 })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly usersService: UsersService) {}
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
@@ -69,6 +71,19 @@ export class AuthController {
       },
     };
   }
+
+  @Get('me')
+  @UseGuards(AuthGuard('jwt-access'))
+async me(@Req() req: any){
+    const user = await this.usersService.find(req.user['userId']);
+    
+    return {
+        statusCode: HttpStatus.OK,
+        success: true,
+        message: 'User retrieved successfully.',
+        user
+    }
+}
 
   @Post('signout')
   @HttpCode(HttpStatus.NO_CONTENT)

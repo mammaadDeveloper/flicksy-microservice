@@ -9,10 +9,10 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access'
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: configService.get('jwt.secret'),
-            ignoreExpiration: false,
+            passReqToCallback: false,
         });
     }
-    validate(payload: any): unknown {
+    validate(payload: any): {userId: any} {
         return {userId: payload.sub};
     }
 
