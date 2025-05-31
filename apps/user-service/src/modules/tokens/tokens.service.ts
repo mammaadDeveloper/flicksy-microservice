@@ -7,6 +7,7 @@ import { PersonalAccessEntity } from './entities/token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
+import { TokenRepositoryService } from './services/repository.service';
 
 @Injectable()
 export class TokensService {
@@ -15,6 +16,7 @@ export class TokensService {
     @InjectRepository(PersonalAccessEntity)
     private readonly tokenRepo: Repository<PersonalAccessEntity>,
     private readonly jwtService: JwtService,
+    private readonly repository: TokenRepositoryService,
   ) {}
   async generateToken(
     user: UserEntity,
@@ -29,21 +31,24 @@ export class TokensService {
 
     const accessToken = this.jwtService.sign(
       { sub: user.id },
-      { secret: this.configService.get('jwt.secret'),expiresIn: '15m' },
+      { secret: this.configService.get('jwt.secret'), expiresIn: '15m' },
     );
 
     const refreshToken = this.jwtService.sign(
       { sub: user.id, jti },
-      { secret: this.configService.get('jwt.refresh.secret'),expiresIn: '30d' },
+      {
+        secret: this.configService.get('jwt.refresh.secret'),
+        expiresIn: '30d',
+      },
     );
 
-    await this.tokenRepo.save({
+    await this.repository.create({
       token: refreshToken,
       user,
-      tokenType: 'refresh',
       expiredAt: dayjs().add(30, 'day').toDate(),
       jti,
-      parent: options?.parent,
+      type: 'refresh',
+      parent: options?.parent
     });
 
     return { accessToken, refreshToken };
@@ -53,34 +58,21 @@ export class TokensService {
     user: UserEntity,
     jti: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const oldToken = await this.findByJti(jti);
-
-    if(!oldToken)
-      throw new NotFoundException('Token not found.')
+    const oldToken = await this.repository.revoke(jti);
 
     const { accessToken, refreshToken } = await this.generateToken(user, {
       parent: oldToken,
     });
 
-    oldToken.isRevoked = true;
-    oldToken.lastUsedAt = new Date();
-    await this.tokenRepo.save(oldToken);
-
     return { accessToken, refreshToken };
   }
 
-  async revokeByJti(jti: string): Promise<void>{
-    const token = await this.findByJti(jti);
-
-    if(!token)
-      throw new NotFoundException('Token not found.');
-
-    token.isRevoked = true;
-    this.tokenRepo.save(token);
+  async revokeByJti(jti: string): Promise<void> {
+    await this.repository.revoke(jti);
     return Promise.resolve();
   }
 
-  async findByJti(jti: string) {
-    return this.tokenRepo.findOne({ where: { jti, isRevoked: false } });
+  async findByJti(jti: string): Promise<PersonalAccessEntity>{
+    return await this.repository.findByJti(jti);
   }
 }

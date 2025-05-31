@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { GrpcModule } from './modules/grpc/grpc.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { UsersModule } from './modules/users/users.module';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UsersModule } from './modules/users/users.module';
         autoLoadEntities: true,
       }),
     }),
+    CqrsModule.forRoot(),
     AuthModule,
     UsersModule,
     TokensModule,
