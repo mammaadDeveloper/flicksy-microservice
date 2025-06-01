@@ -10,6 +10,7 @@ import { GrpcModule } from './modules/grpc/grpc.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { UsersModule } from './modules/users/users.module';
 import { CqrsModule } from '@nestjs/cqrs';
+import { PasswordResetModule } from './modules/password-reset/password-reset.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CqrsModule } from '@nestjs/cqrs';
     UsersModule,
     TokensModule,
     GrpcModule,
+    PasswordResetModule,
   ]
 })
 export class AppModule {}

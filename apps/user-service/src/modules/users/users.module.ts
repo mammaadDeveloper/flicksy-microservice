@@ -6,9 +6,8 @@ import { UserRepositoryService } from './services/repository.service';
 import { CreateUserCommand } from './commands/create/create.command';
 import { FindUserQueryHandler } from './queries/find/find.handler';
 import { FindUserByEmailQueryHandler } from './queries/find-by-email/find-by-email.handler';
-import { ResetPasswordCommandHandler } from './commands';
 
-const commands = [CreateUserCommand, ResetPasswordCommandHandler];
+const commands = [CreateUserCommand];
 const queries = [FindUserQueryHandler, FindUserByEmailQueryHandler];
 @Module({
     imports: [

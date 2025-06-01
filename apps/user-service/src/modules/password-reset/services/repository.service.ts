@@ -5,46 +5,47 @@ import { PasswordResetTokenType } from 'src/shared/types/token.type';
 import { v4 as uuidV4 } from 'uuid';
 import {
   CreatePasswordResetTokenCommand,
+  ResetPasswordCommand,
   UseResetTokenCommand,
 } from '../commands';
 import * as dayjs from 'dayjs';
-import { FindResetTokenQuery } from '../queries/find-reset-token/find-reset-token.query';
+import { PasswordResetTokenEntity } from '../entities/password.entity';
 
 @Injectable()
-export class PasswordRestService {
+export class PasswordRepositoryService {
   constructor(
     private readonly command: CommandBus,
     private readonly query: QueryBus,
   ) {}
 
-  async generateResetToken(
+  async create(
     user: UserEntity,
     type: PasswordResetTokenType,
-  ): Promise<string> {
-    const tokenOrCode: string =
-      type === PasswordResetTokenType.CODE
-        ? Math.floor(100000 + Math.random() * 900000).toString()
-        : uuidV4();
-
-    await this.command.execute(
+    token: string | null,
+  ): Promise<PasswordResetTokenEntity> {
+    return await this.command.execute(
       new CreatePasswordResetTokenCommand(
         user,
-        tokenOrCode,
+        token,
         type,
         dayjs().add(15, 'minute').toDate(),
       ),
     );
-
-    return tokenOrCode;
   }
 
-  async verifyResetToken(
+  async setUsed(
     user: UserEntity,
     token: string,
     type: PasswordResetTokenType,
   ): Promise<UserEntity> {
     return await this.command.execute(
       new UseResetTokenCommand(user, token, type),
+    );
+  }
+
+  async changeUserPassword(id: number, newPassword: string): Promise<void> {
+    await this.command.execute(
+      new ResetPasswordCommand(id, newPassword),
     );
   }
 }

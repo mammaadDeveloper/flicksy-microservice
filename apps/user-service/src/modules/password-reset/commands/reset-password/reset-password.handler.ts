@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { UserEntity } from '../../entities/user.entity';
+import { UserEntity } from '../../../users/entities/user.entity';
 import { ResetPasswordCommand } from './reset-password.command';
 
 @CommandHandler(ResetPasswordCommand)

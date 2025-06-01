@@ -17,8 +17,4 @@ export class UsersService {
   async create(data: Partial<UserEntity>): Promise<UserEntity> {
     return await this.repository.create(data);
   }
-
-  async resetPassword(id: number, newPassword: string): Promise<void> {
-    await this.repository.resetPassword(id, newPassword);
-  }
 }

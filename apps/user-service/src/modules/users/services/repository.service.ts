@@ -4,7 +4,6 @@ import { UserEntity } from '../entities/user.entity';
 import { CreateUserCommand } from '../commands/create/create.command';
 import { FindUserQuery } from '../queries/find/find.query';
 import { FindUserByEmailQuery } from '../queries/find-by-email/find-by-email.query';
-import { ResetPasswordCommand } from '../commands';
 import { hashString } from 'src/shared/utils/hash.util';
 
 @Injectable()
@@ -24,11 +23,5 @@ export class UserRepositoryService {
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     return await this.query.execute(new FindUserByEmailQuery(email));
-  }
-
-  async resetPassword(id: number, newPassword: string): Promise<void> {
-    await this.command.execute(
-      new ResetPasswordCommand(id, hashString(newPassword)),
-    );
   }
 }
