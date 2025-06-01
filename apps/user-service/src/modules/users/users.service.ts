@@ -4,9 +4,7 @@ import { UserRepositoryService } from './services/repository.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly repository: UserRepositoryService
-  ) {}
+  constructor(private readonly repository: UserRepositoryService) {}
 
   async find(id: number): Promise<UserEntity> {
     return await this.repository.find(id);
@@ -18,5 +16,9 @@ export class UsersService {
 
   async create(data: Partial<UserEntity>): Promise<UserEntity> {
     return await this.repository.create(data);
+  }
+
+  async resetPassword(id: number, newPassword: string): Promise<void> {
+    await this.repository.resetPassword(id, newPassword);
   }
 }
