@@ -11,7 +11,7 @@ export class FindUserByEmailQueryHandler implements IQueryHandler<FindUserByEmai
         private readonly repository: Repository<UserEntity>
     ){}
     async execute(query: FindUserByEmailQuery): Promise<UserEntity> {
-        return await this.repository.findOneByOrFail({email: query.email});
+        return await this.repository.findOneBy({email: query.email});
     }
 
 }

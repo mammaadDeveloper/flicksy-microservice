@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
 import { UserRepositoryService } from './services/repository.service';
+import { plainToClass } from 'class-transformer';
+import { UsersCreateResponseDto } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,10 +13,18 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
-    return await this.repository.findByEmail(email);
+    const user = await this.repository.findByEmail(email);
+
+    if (!user)
+      throw new NotFoundException('User not found with the provided email');
+
+    return user;
   }
 
-  async create(data: Partial<UserEntity>): Promise<UserEntity> {
-    return await this.repository.create(data);
+  async create(data: Partial<UserEntity>): Promise<UsersCreateResponseDto> {
+    const user = await this.repository.create(data);
+    return plainToClass(UsersCreateResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 }
