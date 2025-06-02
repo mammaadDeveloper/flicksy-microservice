@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UseResetTokenCommand } from './use-reset-token.command';
-import { UserEntity } from 'src/modules/users/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
@@ -18,8 +17,8 @@ export class UseResetTokenCommandHandler
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
-  async execute(command: UseResetTokenCommand): Promise<UserEntity> {
-    const { user, token, type } = command;
+  async execute(command: UseResetTokenCommand): Promise<void> {
+    const { userId, token, type } = command;
 
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -30,7 +29,7 @@ export class UseResetTokenCommandHandler
       const repo = queryRunner.manager.getRepository(PasswordResetTokenEntity);
 
       const passwordEntity = await repo.findOne({
-        where: { user, token, type, isUsed: false },
+        where: { user: {id: userId}, token, type, isUsed: false },
         relations: ['user'],
       });
       if (!passwordEntity) {
@@ -45,13 +44,9 @@ export class UseResetTokenCommandHandler
       await repo.save(passwordEntity);
 
       await queryRunner.commitTransaction();
-      return passwordEntity.user;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException({
-        message: 'Failed to use password reset token',
-        error,
-      });
+      throw error;
     } finally {
       await queryRunner.release();
     }

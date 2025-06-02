@@ -1,15 +1,18 @@
+import * as dayjs from 'dayjs';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { PasswordExistsType } from 'src/shared/types/password-reset.type';
+import { PasswordResetTokenType } from 'src/shared/types/token.type';
+
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { PasswordResetTokenType } from 'src/shared/types/token.type';
-import { v4 as uuidV4 } from 'uuid';
+
 import {
   CreatePasswordResetTokenCommand,
   ResetPasswordCommand,
   UseResetTokenCommand,
 } from '../commands';
-import * as dayjs from 'dayjs';
 import { PasswordResetTokenEntity } from '../entities/password.entity';
+import { FindResetTokenQuery } from '../queries';
 
 @Injectable()
 export class PasswordRepositoryService {
@@ -34,18 +37,24 @@ export class PasswordRepositoryService {
   }
 
   async setUsed(
-    user: UserEntity,
+    userId: number,
     token: string,
     type: PasswordResetTokenType,
-  ): Promise<UserEntity> {
-    return await this.command.execute(
-      new UseResetTokenCommand(user, token, type),
-    );
+  ): Promise<boolean> {
+    try {
+      await this.command.execute(new UseResetTokenCommand(userId, token, type));
+      return true;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async changeUserPassword(id: number, newPassword: string): Promise<void> {
-    await this.command.execute(
-      new ResetPasswordCommand(id, newPassword),
-    );
+    await this.command.execute(new ResetPasswordCommand(id, newPassword));
+  }
+
+  async exists(credential: PasswordExistsType) {
+    const { token, type, user } = credential;
+    return await this.query.execute(new FindResetTokenQuery(user, token, type));
   }
 }
