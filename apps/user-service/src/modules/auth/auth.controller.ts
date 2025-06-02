@@ -29,6 +29,7 @@ export class AuthController {
 
     return {
       statusCode: HttpStatus.CREATED,
+      status: 'CREATED',
       success: true,
       message: 'Sign up successful.',
       user,
@@ -36,11 +37,13 @@ export class AuthController {
   }
 
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
   async signIn(@Body() signInV1Dto: SigninV1Dto) {
     const { user, accessToken, refreshToken } =
       await this.authService.signIn(signInV1Dto);
     return {
       statusCode: HttpStatus.OK,
+      status: 'OK',
       success: true,
       message: 'Sign in successful.',
       user,
@@ -62,6 +65,7 @@ export class AuthController {
 
     return {
       statusCode: HttpStatus.OK,
+      status: 'OK',
       success: true,
       message: 'Token refreshed successfully.',
       user,
@@ -73,12 +77,14 @@ export class AuthController {
   }
 
   @Get('me')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt-access'))
 async me(@Req() req: any){
     const user = await this.usersService.find(req.user['userId']);
     
     return {
         statusCode: HttpStatus.OK,
+        status: 'OK',
         success: true,
         message: 'User retrieved successfully.',
         user
@@ -89,11 +95,5 @@ async me(@Req() req: any){
   @HttpCode(HttpStatus.NO_CONTENT)
   async signout(@Req() req: any){
     await this.authService.signout(req.jti);
-    
-    return {
-        statusCode: HttpStatus.NO_CONTENT,
-        success: true,
-        message: 'User signout successfully.'
-    }
   }
 }
