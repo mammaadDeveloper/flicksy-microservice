@@ -7,12 +7,11 @@ import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import {
-  CreatePasswordResetTokenCommand,
-  ResetPasswordCommand,
-  UseResetTokenCommand,
+    CreatePasswordResetTokenCommand, ResetPasswordCommand, UseResetTokenCommand
 } from '../commands';
 import { PasswordResetTokenEntity } from '../entities/password.entity';
 import { ExistsResetTokenQuery, FindResetTokenQuery } from '../queries';
+import { CheckAvailableQuery } from '../queries/check-available/check-available.query';
 
 @Injectable()
 export class PasswordRepositoryService {
@@ -54,10 +53,20 @@ export class PasswordRepositoryService {
   }
 
   async find(credentials: PasswordCredentialsType) {
-    return await this.query.execute(new FindResetTokenQuery(credentials.user, credentials.token, credentials.type));
+    return await this.query.execute(
+      new FindResetTokenQuery(
+        credentials.user,
+        credentials.token,
+        credentials.type,
+      ),
+    );
   }
 
-  async exists(credentials: PasswordCredentialsType){
+  async exists(credentials: PasswordCredentialsType) {
     return this.query.execute(new ExistsResetTokenQuery(credentials));
+  }
+
+  async check(userId: number): Promise<boolean> {
+    return await this.query.execute(new CheckAvailableQuery(userId));
   }
 }

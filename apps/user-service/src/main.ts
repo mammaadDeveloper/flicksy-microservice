@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NotFoundExceptionFilter } from './common/filters/not-found-exception.filter';
+import { ConflictExceptionFilter, NotFoundExceptionFilter } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +18,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Filters
-  app.useGlobalFilters(new NotFoundExceptionFilter())
+  app.useGlobalFilters(new NotFoundExceptionFilter(), new ConflictExceptionFilter());
 
   await app.listen(config.get('app.port'));
 }

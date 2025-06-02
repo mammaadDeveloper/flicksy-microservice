@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PasswordResetTokenEntity } from './entities/password.entity';
+
 import { UsersModule } from '../users/users.module';
+import {
+    CreatePasswordResetTokenCommandHandler, ResetPasswordCommandHandler, UseResetTokenCommandHandler
+} from './commands';
+import { PasswordResetTokenEntity } from './entities/password.entity';
 import { PasswordResetController } from './password-reset.controller';
 import { PasswordResetService } from './password-reset.service';
-import { PasswordRepositoryService } from './services/repository.service';
-import {
-  CreatePasswordResetTokenCommandHandler,
-  ResetPasswordCommandHandler,
-  UseResetTokenCommandHandler,
-} from './commands';
 import { ExistsResetTokenQueryHandler, FindResetTokenQueryHandler } from './queries';
+import { CheckAvailableQueryHandler } from './queries/check-available/check-available.handler';
+import { PasswordRepositoryService } from './services/repository.service';
 
 const commands = [
   CreatePasswordResetTokenCommandHandler,
@@ -18,7 +18,11 @@ const commands = [
   UseResetTokenCommandHandler,
 ];
 
-const queries = [FindResetTokenQueryHandler, ExistsResetTokenQueryHandler];
+const queries = [
+  FindResetTokenQueryHandler,
+  ExistsResetTokenQueryHandler,
+  CheckAvailableQueryHandler,
+];
 @Module({
   imports: [TypeOrmModule.forFeature([PasswordResetTokenEntity]), UsersModule],
   controllers: [PasswordResetController],

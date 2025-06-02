@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PasswordRepositoryService } from './services/repository.service';
 import { UserEntity } from '../users/entities/user.entity';
 import { PasswordResetTokenType } from 'src/shared/types/token.type';
@@ -21,6 +25,9 @@ export class PasswordResetService {
       type === PasswordResetTokenType.CODE
         ? Math.floor(100000 + Math.random() * 900000).toString()
         : uuidV4();
+
+    if (await this.repository.check(user.id))
+      throw new ConflictException('The token has already been sent.');
 
     await this.repository.create(
       user,
@@ -58,7 +65,7 @@ export class PasswordResetService {
     return tokenEntity;
   }
 
-  async exists(credentials: PasswordCredentialsType){
+  async exists(credentials: PasswordCredentialsType) {
     return this.repository.exists(credentials);
   }
 }
