@@ -10,7 +10,7 @@ import {
   ResetPasswordCommandHandler,
   UseResetTokenCommandHandler,
 } from './commands';
-import { FindResetTokenQueryHandler } from './queries';
+import { ExistsResetTokenQueryHandler, FindResetTokenQueryHandler } from './queries';
 
 const commands = [
   CreatePasswordResetTokenCommandHandler,
@@ -18,7 +18,7 @@ const commands = [
   UseResetTokenCommandHandler,
 ];
 
-const queries = [FindResetTokenQueryHandler];
+const queries = [FindResetTokenQueryHandler, ExistsResetTokenQueryHandler];
 @Module({
   imports: [TypeOrmModule.forFeature([PasswordResetTokenEntity]), UsersModule],
   controllers: [PasswordResetController],

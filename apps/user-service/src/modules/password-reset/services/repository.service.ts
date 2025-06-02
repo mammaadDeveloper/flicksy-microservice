@@ -1,6 +1,6 @@
 import * as dayjs from 'dayjs';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { PasswordExistsType } from 'src/shared/types/password-reset.type';
+import { PasswordCredentialsType } from 'src/shared/types/password-reset.type';
 import { PasswordResetTokenType } from 'src/shared/types/token.type';
 
 import { Injectable } from '@nestjs/common';
@@ -12,7 +12,7 @@ import {
   UseResetTokenCommand,
 } from '../commands';
 import { PasswordResetTokenEntity } from '../entities/password.entity';
-import { FindResetTokenQuery } from '../queries';
+import { ExistsResetTokenQuery, FindResetTokenQuery } from '../queries';
 
 @Injectable()
 export class PasswordRepositoryService {
@@ -53,8 +53,11 @@ export class PasswordRepositoryService {
     await this.command.execute(new ResetPasswordCommand(id, newPassword));
   }
 
-  async exists(credential: PasswordExistsType) {
-    const { token, type, user } = credential;
-    return await this.query.execute(new FindResetTokenQuery(user, token, type));
+  async find(credentials: PasswordCredentialsType) {
+    return await this.query.execute(new FindResetTokenQuery(credentials.user, credentials.token, credentials.type));
+  }
+
+  async exists(credentials: PasswordCredentialsType){
+    return this.query.execute(new ExistsResetTokenQuery(credentials));
   }
 }

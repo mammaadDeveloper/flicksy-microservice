@@ -11,13 +11,15 @@ import { TokensModule } from './modules/tokens/tokens.module';
 import { UsersModule } from './modules/users/users.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PasswordResetModule } from './modules/password-reset/password-reset.module';
+import { EncryptionModule } from './shared/utils/encryption/encryption.module';
+import hashingConfig from './config/hashing.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '../../../.env'],
-      load: [appConfig, databaseConfig, jwtConfig],
+      load: [appConfig, databaseConfig, jwtConfig, hashingConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -32,6 +34,7 @@ import { PasswordResetModule } from './modules/password-reset/password-reset.mod
       }),
     }),
     CqrsModule.forRoot(),
+    EncryptionModule,
     AuthModule,
     UsersModule,
     TokensModule,

@@ -57,7 +57,7 @@ export class PasswordResetController {
 
     const user = await this.usersService.findByEmail(email);
 
-    await this.passwordResetService.exists({token, type, user});
+    await this.passwordResetService.find({token, type, user});
     
     await this.passwordResetService.reset(user.id, newPassword);
 
