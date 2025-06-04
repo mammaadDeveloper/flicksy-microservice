@@ -5,6 +5,8 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Patch,
+  Version,
 } from '@nestjs/common';
 import { CoreSessionService } from './services/core.service';
 
@@ -41,8 +43,16 @@ export class SessionsController {
   }
 
   @Delete(':token')
+  @Version('1')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('token') token: string) {
     await this.sessionsService.remove(token);
+  }
+
+  @Delete(':token/leave')
+  @Version('1')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async leaveCurrent(@Param('token') token:string){
+    await this.sessionsService.leaveCurrent(token);
   }
 }

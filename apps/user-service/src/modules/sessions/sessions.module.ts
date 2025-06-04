@@ -6,12 +6,13 @@ import { SessionEntity } from './entities/session.entity';
 import {
   CreateSessionCommandHandler,
   RemoveSessionCommandHandler,
+  RevokeSessionCommandHandler,
 } from './commands';
 import { SessionsRepositoryService } from './services/repository.service';
 import { GetAllSessionsQueryHandler } from './queries';
 import { CoreSessionService } from './services/core.service';
 
-const commands = [CreateSessionCommandHandler, RemoveSessionCommandHandler];
+const commands = [CreateSessionCommandHandler, RemoveSessionCommandHandler, RevokeSessionCommandHandler];
 
 const queries = [GetAllSessionsQueryHandler];
 

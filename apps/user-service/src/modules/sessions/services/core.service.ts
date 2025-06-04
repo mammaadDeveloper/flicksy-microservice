@@ -33,5 +33,9 @@ export class CoreSessionService {
     }
   }
 
+  async leaveCurrent(jti: string): Promise<void>{
+    await this.repository.revoke(jti);
+  }
+
   async leaveOthers() {}
 }
