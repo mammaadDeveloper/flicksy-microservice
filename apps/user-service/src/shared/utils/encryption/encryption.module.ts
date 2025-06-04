@@ -1,9 +1,10 @@
 import { Global, Module } from '@nestjs/common';
 import { EncryptionService } from './encryption.service';
+import { HashingService } from './hashing.service';
 
 @Global()
 @Module({
-    providers: [EncryptionService],
-    exports: [EncryptionService]
+    providers: [EncryptionService, HashingService],
+    exports: [EncryptionService, HashingService]
 })
 export class EncryptionModule {}
