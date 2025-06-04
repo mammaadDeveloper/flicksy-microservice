@@ -3,17 +3,26 @@ import { SessionsService } from './sessions.service';
 import { SessionsController } from './sessions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SessionEntity } from './entities/session.entity';
-import { CreateSessionCommandHandler } from './commands';
+import {
+  CreateSessionCommandHandler,
+  RemoveSessionCommandHandler,
+} from './commands';
 import { SessionsRepositoryService } from './services/repository.service';
+import { GetAllSessionsQueryHandler } from './queries';
 
-const commands = [CreateSessionCommandHandler];
+const commands = [CreateSessionCommandHandler, RemoveSessionCommandHandler];
 
-const queries = [];
+const queries = [GetAllSessionsQueryHandler];
 
 @Module({
   imports: [TypeOrmModule.forFeature([SessionEntity])],
   controllers: [SessionsController],
-  providers: [...commands, ...queries, SessionsService, SessionsRepositoryService],
+  providers: [
+    ...commands,
+    ...queries,
+    SessionsService,
+    SessionsRepositoryService,
+  ],
   exports: [SessionsService],
 })
 export class SessionsModule {}

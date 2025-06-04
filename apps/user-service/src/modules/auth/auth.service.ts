@@ -11,12 +11,15 @@ import { compareHash } from 'src/shared/utils/hash.util';
 import { TokensService } from '../tokens/tokens.service';
 import { SignupV1Dto } from './dto/signup.dto';
 import { UserEntity } from '../users/entities/user.entity';
+import { SessionsService } from '../sessions/sessions.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly tokensService: TokensService,
+    private readonly sessionsService: SessionsService,
   ) {}
 
   async signUP({ username, email, phone, password }: SignupV1Dto) {
@@ -39,7 +42,7 @@ export class AuthService {
     return user;
   }
 
-  async signIn({ email, password }: SigninV1Dto): Promise<{
+  async signIn({ email, password }: SigninV1Dto, ip: string, userAgent: string): Promise<{
     user: UserEntity;
     accessToken: string;
     refreshToken: string;
@@ -51,9 +54,15 @@ export class AuthService {
     if (!compareHash(password, user.password))
       throw new HttpException('Invalid credentials.', HttpStatus.AMBIGUOUS);
 
-    const { accessToken, refreshToken } =
+    const { accessToken, refreshToken, jti } =
       await this.tokensService.generateToken(user);
-
+      
+    await this.sessionsService.create({
+      ip,
+      user_agent: userAgent,
+      jti,
+      userId: user.id,
+    });
     return {
       user,
       accessToken,

@@ -7,12 +7,14 @@ import { AccessTokenStrategy } from './strategies/access.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { SessionsModule } from '../sessions/sessions.module';
 
 @Module({
     imports: [
+        JwtModule.register({}),
         UsersModule,
         TokensModule,
-        JwtModule.register({})
+        SessionsModule,
     ],
     controllers: [AuthController],
     providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],

@@ -49,7 +49,7 @@ export class TokensService {
       parent: options?.parent
     });
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, jti };
   }
 
   async refreshToken(

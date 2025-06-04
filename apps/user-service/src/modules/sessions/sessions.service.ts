@@ -5,26 +5,27 @@ import { SessionEntity } from './entities/session.entity';
 
 @Injectable()
 export class SessionsService {
-  constructor(
-    private readonly repository: SessionsRepositoryService
-  ){}
+  constructor(private readonly repository: SessionsRepositoryService) {}
   async create(createSessionDto: CreateSessionDto): Promise<SessionEntity> {
     return await this.repository.create(createSessionDto);
   }
 
-  findAll() {
-    return `This action returns all sessions`;
+  async findAll(): Promise<SessionEntity[]> {
+    return await this.repository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} session`;
+  async findOne(id: string): Promise<SessionEntity | null> {
+    const session = await this.repository.findById(id);
+    
+    if(!session)
+      return null;
+
+    return session;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} session`;
+  async remove(credential: {id?: string, jti?:string}): Promise<void>{
+    await this.repository.remove(credential);
   }
 
-  async leaveOthers(){
-
-  }
+  async leaveOthers() {}
 }

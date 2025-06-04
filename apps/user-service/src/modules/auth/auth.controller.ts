@@ -12,15 +12,18 @@ import { AuthGuard } from '@nestjs/passport';
 import { SigninV1Dto } from './dto/signin.dto';
 import { AuthService } from './auth.service';
 import { SignupV1Dto } from './dto/signup.dto';
-import { Request } from 'express';
 import { UsersService } from '../users/users.service';
+import { IpAddress, UserAgent } from 'src/common';
 
 @Controller({
   version: '1',
   path: 'auth',
 })
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly usersService: UsersService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
@@ -38,9 +41,16 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  async signIn(@Body() signInV1Dto: SigninV1Dto) {
-    const { user, accessToken, refreshToken } =
-      await this.authService.signIn(signInV1Dto);
+  async signIn(
+    @Body() signInV1Dto: SigninV1Dto,
+    @IpAddress() ip: string,
+    @UserAgent() userAgent: string,
+  ) {
+    const { user, accessToken, refreshToken } = await this.authService.signIn(
+      signInV1Dto,
+      ip,
+      userAgent,
+    );
     return {
       statusCode: HttpStatus.OK,
       status: 'OK',
@@ -79,21 +89,21 @@ export class AuthController {
   @Get('me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt-access'))
-async me(@Req() req: any){
+  async me(@Req() req: any) {
     const user = await this.usersService.find(req.user['userId']);
-    
+
     return {
-        statusCode: HttpStatus.OK,
-        status: 'OK',
-        success: true,
-        message: 'User retrieved successfully.',
-        user
-    }
-}
+      statusCode: HttpStatus.OK,
+      status: 'OK',
+      success: true,
+      message: 'User retrieved successfully.',
+      user,
+    };
+  }
 
   @Post('signout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async signout(@Req() req: any){
+  async signout(@Req() req: any) {
     await this.authService.signout(req.jti);
   }
 }
