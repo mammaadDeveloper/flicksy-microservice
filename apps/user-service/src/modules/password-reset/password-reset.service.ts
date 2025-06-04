@@ -9,6 +9,7 @@ import { PasswordResetTokenType } from 'src/shared/types/token.type';
 import { v4 as uuidV4 } from 'uuid';
 import { PasswordCredentialsType } from 'src/shared/types/password-reset.type';
 import { EncryptionService } from 'src/shared/utils/encryption/encryption.service';
+import { PasswordResetTokenEntity } from './entities/password.entity';
 
 @Injectable()
 export class PasswordResetService {
@@ -50,7 +51,7 @@ export class PasswordResetService {
   async reset(id: number, newPassword: string): Promise<void> {
     await this.repository.changeUserPassword(id, newPassword);
   }
-  async find(credential: PasswordCredentialsType) {
+  async find(credential: PasswordCredentialsType): Promise<PasswordResetTokenEntity> {
     const { token, type, user } = credential;
     const encodedToken = this.encryption.encrypt(token);
     const tokenEntity = await this.repository.find({
@@ -65,7 +66,7 @@ export class PasswordResetService {
     return tokenEntity;
   }
 
-  async exists(credentials: PasswordCredentialsType) {
+  async exists(credentials: PasswordCredentialsType): Promise<boolean> {
     return this.repository.exists(credentials);
   }
 }

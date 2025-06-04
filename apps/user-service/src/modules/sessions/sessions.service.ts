@@ -26,6 +26,4 @@ export class SessionsService {
   async remove(credential: {id?: string, jti?:string}): Promise<void>{
     await this.repository.remove(credential);
   }
-
-  async leaveOthers() {}
 }

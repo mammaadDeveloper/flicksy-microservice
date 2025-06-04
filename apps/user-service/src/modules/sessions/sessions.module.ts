@@ -9,6 +9,7 @@ import {
 } from './commands';
 import { SessionsRepositoryService } from './services/repository.service';
 import { GetAllSessionsQueryHandler } from './queries';
+import { CoreSessionService } from './services/core.service';
 
 const commands = [CreateSessionCommandHandler, RemoveSessionCommandHandler];
 
@@ -22,6 +23,7 @@ const queries = [GetAllSessionsQueryHandler];
     ...queries,
     SessionsService,
     SessionsRepositoryService,
+    CoreSessionService,
   ],
   exports: [SessionsService],
 })

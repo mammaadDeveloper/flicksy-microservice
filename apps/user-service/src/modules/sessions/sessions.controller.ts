@@ -6,11 +6,11 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { SessionsService } from './sessions.service';
+import { CoreSessionService } from './services/core.service';
 
 @Controller('sessions')
 export class SessionsController {
-  constructor(private readonly sessionsService: SessionsService) {}
+  constructor(private readonly sessionsService: CoreSessionService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -36,12 +36,13 @@ export class SessionsController {
       status: 'OK',
       success: true,
       message: 'Session fetched successfully',
-      data
+      data,
     };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    // return this.sessionsService.remove(id, '');
+  @Delete(':token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('token') token: string) {
+    await this.sessionsService.remove(token);
   }
 }
