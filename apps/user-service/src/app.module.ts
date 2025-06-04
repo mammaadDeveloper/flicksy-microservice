@@ -12,6 +12,7 @@ import { UsersModule } from './modules/users/users.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PasswordResetModule } from './modules/password-reset/password-reset.module';
 import { EncryptionModule } from './shared/utils/encryption/encryption.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
 import hashingConfig from './config/hashing.config';
 
 @Module({
@@ -40,6 +41,7 @@ import hashingConfig from './config/hashing.config';
     TokensModule,
     GrpcModule,
     PasswordResetModule,
+    SessionsModule,
   ]
 })
 export class AppModule {}
