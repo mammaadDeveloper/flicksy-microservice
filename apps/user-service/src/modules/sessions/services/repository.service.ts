@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { CreateSessionCommand, RemoveSessionCommand, RevokeSessionCommand } from '../commands';
+import { CreateSessionCommand, DeleteExpiredSessionCommand, RemoveSessionCommand, RevokeSessionCommand } from '../commands';
 import { CreateSessionDto } from '../dto/create-session.dto';
 import { SessionEntity } from '../entities/session.entity';
 import { GetAllSessionsQuery } from '../queries';
@@ -32,5 +32,9 @@ export class SessionsRepositoryService {
 
   async revoke(jti: string){
     return await this.command.execute(new RevokeSessionCommand(jti));
+  }
+
+  async removeExpired(): Promise<number>{
+    return await this.command.execute(new DeleteExpiredSessionCommand());
   }
 }

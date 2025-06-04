@@ -5,14 +5,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SessionEntity } from './entities/session.entity';
 import {
   CreateSessionCommandHandler,
+  DeleteExpiredSessionCommandHandler,
   RemoveSessionCommandHandler,
   RevokeSessionCommandHandler,
 } from './commands';
 import { SessionsRepositoryService } from './services/repository.service';
 import { GetAllSessionsQueryHandler } from './queries';
 import { CoreSessionService } from './services/core.service';
+import { CronSessionService } from './services/cron.service';
 
-const commands = [CreateSessionCommandHandler, RemoveSessionCommandHandler, RevokeSessionCommandHandler];
+const commands = [
+  CreateSessionCommandHandler,
+  RemoveSessionCommandHandler,
+  RevokeSessionCommandHandler,
+  DeleteExpiredSessionCommandHandler,
+];
 
 const queries = [GetAllSessionsQueryHandler];
 
@@ -25,6 +32,7 @@ const queries = [GetAllSessionsQueryHandler];
     SessionsService,
     SessionsRepositoryService,
     CoreSessionService,
+    CronSessionService
   ],
   exports: [SessionsService],
 })

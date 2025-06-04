@@ -14,6 +14,7 @@ import { PasswordResetModule } from './modules/password-reset/password-reset.mod
 import { EncryptionModule } from './shared/utils/encryption/encryption.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 import hashingConfig from './config/hashing.config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import hashingConfig from './config/hashing.config';
       }),
     }),
     CqrsModule.forRoot(),
+    ScheduleModule.forRoot(),
     EncryptionModule,
     AuthModule,
     UsersModule,
