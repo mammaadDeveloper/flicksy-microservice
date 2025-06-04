@@ -17,7 +17,7 @@ export class SessionsService {
   async findOne(id: string): Promise<SessionEntity | null> {
     const session = await this.repository.findById(id);
     
-    if(!session)
+    if(!session || session.expiredAt > new Date())
       return null;
 
     return session;

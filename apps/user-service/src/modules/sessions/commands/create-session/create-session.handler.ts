@@ -3,6 +3,7 @@ import { CreateSessionCommand } from './create-session.command';
 import { SessionEntity } from '../../entities/session.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import * as dayjs from 'dayjs';
 
 @CommandHandler(CreateSessionCommand)
 export class CreateSessionCommandHandler
@@ -30,6 +31,7 @@ export class CreateSessionCommandHandler
         user: { id: userId },
         ipAddress: ip,
         userAgent: user_agent,
+        expiredAt: dayjs().add(30, 'day').toDate(),
         isRevoked,
       });
       await repo.save(sessionEntity);

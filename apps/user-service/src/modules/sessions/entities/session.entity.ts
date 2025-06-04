@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('sessions')
@@ -32,13 +31,13 @@ export class SessionEntity {
   @Column({ name: 'is_revoked', type: 'boolean', default: false })
   isRevoked: boolean;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, {onDelete: 'CASCADE'})
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
+  @Column({name: 'expired_at', type: 'timestamp'})
+  expiredAt: Date;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }
