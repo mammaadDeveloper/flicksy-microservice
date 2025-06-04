@@ -42,7 +42,11 @@ export class AuthService {
     return user;
   }
 
-  async signIn({ email, password }: SigninV1Dto, ip: string, userAgent: string): Promise<{
+  async signIn(
+    { email, password }: SigninV1Dto,
+    ip: string,
+    userAgent: string,
+  ): Promise<{
     user: UserEntity;
     accessToken: string;
     refreshToken: string;
@@ -56,7 +60,7 @@ export class AuthService {
 
     const { accessToken, refreshToken, jti } =
       await this.tokensService.generateToken(user);
-      
+
     await this.sessionsService.create({
       ip,
       user_agent: userAgent,
@@ -70,14 +74,23 @@ export class AuthService {
     };
   }
 
-  async refresh(userId: number, jti: string) {
+  async refresh(userId: number, jti: string, ip: string, userAgent: string) {
     const user = await this.usersService.find(userId);
     if (!user) throw new NotFoundException('User not found.');
 
-    const { accessToken, refreshToken } = await this.tokensService.refreshToken(
+    const { accessToken, refreshToken, old } = await this.tokensService.refreshToken(
       user,
       jti,
     );
+
+    await this.sessionsService.create({
+      jti,
+      ip,
+      user_agent: userAgent,
+      userId: user.id,
+    });
+    await this.sessionsService.leave(old.jti);
+    
 
     return { user, accessToken, refreshToken };
   }

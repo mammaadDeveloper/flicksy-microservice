@@ -12,6 +12,6 @@ export class FindByJtiQueryHandler implements IQueryHandler<FindByJtiQuery> {
   ) {}
   async execute(query: FindByJtiQuery): Promise<PersonalAccessEntity> {
     const { jti } = query;
-    return await this.repository.findOneByOrFail({ jti });
+    return await this.repository.findOneBy({ jti });
   }
 }

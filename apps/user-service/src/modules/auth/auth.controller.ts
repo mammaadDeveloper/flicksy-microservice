@@ -14,6 +14,7 @@ import { AuthService } from './auth.service';
 import { SignupV1Dto } from './dto/signup.dto';
 import { UsersService } from '../users/users.service';
 import { IpAddress, UserAgent } from 'src/common';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
 
 @Controller({
   version: '1',
@@ -67,10 +68,16 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt-refresh'))
-  async refresh(@Req() req: any) {
+  async refresh(
+    @GetUser() userData: { userId: number; jti: string },
+    @IpAddress() ip: string,
+    @UserAgent() userAgent: string,
+  ) {
     const { user, accessToken, refreshToken } = await this.authService.refresh(
-      req.userId,
-      req.jti,
+      userData.userId,
+      userData.jti,
+      ip,
+      userAgent,
     );
 
     return {
