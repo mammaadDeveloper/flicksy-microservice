@@ -20,9 +20,6 @@ export class TokensService {
     user: UserEntity,
     options?: {
       parent?: PersonalAccessEntity;
-      // children?: any;
-      // type?: 'access' | 'refresh';
-      // isRevoked?: boolean;
     },
   ) {
     const jti = uuidV4();
@@ -67,7 +64,6 @@ export class TokensService {
 
   async revokeByJti(jti: string): Promise<void> {
     await this.repository.revoke(jti);
-    return Promise.resolve();
   }
 
   async findByJti(jti: string): Promise<PersonalAccessEntity>{

@@ -6,6 +6,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { UserEntity } from '../../../users/entities/user.entity';
 import { ResetPasswordCommand } from './reset-password.command';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @CommandHandler(ResetPasswordCommand)
 export class ResetPasswordCommandHandler
@@ -14,7 +15,10 @@ export class ResetPasswordCommandHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-  ) {}
+    private readonly logger: AppLoggerService
+  ) {
+    logger.setContext(ResetPasswordCommandHandler.name);
+  }
   async execute(command: ResetPasswordCommand): Promise<void> {
     const { id, newPassword } = command;
     const queryRunner = this.dataSource.createQueryRunner();
@@ -32,8 +36,11 @@ export class ResetPasswordCommandHandler
       await repo.save(userEntity);
 
       await queryRunner.commitTransaction();
+
+      this.logger.log('User password reseed successfully');
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Failed to reset password', error.message);
       throw error;
     } finally {
       await queryRunner.release();

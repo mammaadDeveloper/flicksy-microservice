@@ -4,6 +4,7 @@ import { PasswordResetTokenEntity } from '../../entities/password.entity';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { InternalServerErrorException } from '@nestjs/common';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @CommandHandler(CreatePasswordResetTokenCommand)
 export class CreatePasswordResetTokenCommandHandler
@@ -12,6 +13,7 @@ export class CreatePasswordResetTokenCommandHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    private readonly logger: AppLoggerService
   ) {}
   async execute(
     command: CreatePasswordResetTokenCommand,
@@ -36,9 +38,12 @@ export class CreatePasswordResetTokenCommandHandler
 
       await queryRunner.commitTransaction();
 
+      this.logger.log('Password reset token created successfully');
+
       return passwordEntity;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Failed to create password reset token', error.message);
       throw new InternalServerErrorException({
         message: 'Failed to create password reset token',
         error,

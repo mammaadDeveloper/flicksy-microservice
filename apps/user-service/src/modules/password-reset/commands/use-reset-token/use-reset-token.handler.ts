@@ -8,6 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PasswordResetTokenEntity } from '../../entities/password.entity';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @CommandHandler(UseResetTokenCommand)
 export class UseResetTokenCommandHandler
@@ -16,7 +17,10 @@ export class UseResetTokenCommandHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-  ) {}
+    private readonly logger: AppLoggerService
+  ) {
+    logger.setContext(UseResetTokenCommandHandler.name);
+  }
   async execute(command: UseResetTokenCommand): Promise<void> {
     const { userId, token, type } = command;
 
@@ -44,8 +48,11 @@ export class UseResetTokenCommandHandler
       await repo.save(passwordEntity);
 
       await queryRunner.commitTransaction();
+
+      this.logger.log('Set used for password reset token successfully');
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Failed to set used password reset token', error.message);
       throw error;
     } finally {
       await queryRunner.release();

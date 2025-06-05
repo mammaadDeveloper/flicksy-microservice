@@ -4,6 +4,7 @@ import { SessionEntity } from '../../entities/session.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import * as dayjs from 'dayjs';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @CommandHandler(CreateSessionCommand)
 export class CreateSessionCommandHandler
@@ -12,7 +13,10 @@ export class CreateSessionCommandHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-  ) {}
+    private readonly logger: AppLoggerService
+  ) {
+    logger.setContext(CreateSessionCommandHandler.name);
+  }
 
   async execute(command: CreateSessionCommand): Promise<SessionEntity> {
     const {
@@ -38,9 +42,12 @@ export class CreateSessionCommandHandler
 
       await queryRunner.commitTransaction();
 
+      this.logger.log('Session created successfully');
+
       return sessionEntity;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Failed to create session', error.message);
       throw error;
     } finally {
       await queryRunner.release();

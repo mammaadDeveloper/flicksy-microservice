@@ -13,6 +13,7 @@ import { SignupV1Dto } from './dto/signup.dto';
 import { UserEntity } from '../users/entities/user.entity';
 import { SessionsService } from '../sessions/sessions.service';
 import { Request } from 'express';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly tokensService: TokensService,
     private readonly sessionsService: SessionsService,
+    private readonly logger: AppLoggerService
   ) {}
 
   async signUP({ username, email, phone, password }: SignupV1Dto) {
@@ -38,6 +40,8 @@ export class AuthService {
         'User creation failed.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+
+      this.logger.log('User signed up successfully');
 
     return user;
   }
@@ -97,6 +101,6 @@ export class AuthService {
 
   async signout(jti: string): Promise<void> {
     await this.tokensService.revokeByJti(jti);
-    return Promise.resolve();
+    this.logger.warn('User signed out!');
   }
 }

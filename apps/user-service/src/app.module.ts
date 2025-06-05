@@ -15,6 +15,8 @@ import { EncryptionModule } from './shared/utils/encryption/encryption.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 import hashingConfig from './config/hashing.config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { LoggerModule } from 'nestjs-pino';
+import { LoggerModule as AppLoggerModule } from './shared/utils/logger/logger.module';
 
 @Module({
   imports: [
@@ -37,6 +39,26 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     CqrsModule.forRoot(),
     ScheduleModule.forRoot(),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        // formatters: {
+        //   level: (label, number) => ({level: `${label.toUpperCase()}(${number})`}),
+        //   bindings: (bindings) => ({pid: bindings.pid})
+        // },
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            // singleLine: true,
+            colorize: true,
+            levelFirst: true,
+            translateTime: 'yyyy-mm-dd HH:MM:ss.l',
+            ignore: 'pid,hostname',
+            messageFormat: '{method} {url} {msg} - {res.statusCode}',
+            // customColors: 'error:red,info:green,debug:cyan,warn:yellow',
+          }
+        }
+      }
+    }),
     EncryptionModule,
     AuthModule,
     UsersModule,
@@ -44,6 +66,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     GrpcModule,
     PasswordResetModule,
     SessionsModule,
+    AppLoggerModule,
   ]
 })
 export class AppModule {}

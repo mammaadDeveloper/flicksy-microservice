@@ -3,6 +3,9 @@ import { CreateTokenCommand } from './create-token.command';
 import { PersonalAccessEntity } from '../../entities/token.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { Logger } from '@nestjs/common';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
+import { error } from 'console';
 
 @CommandHandler(CreateTokenCommand)
 export class CreateTokenCommandHandler
@@ -11,7 +14,10 @@ export class CreateTokenCommandHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-  ) {}
+    private readonly logger: AppLoggerService
+  ) {
+    logger.setContext(CreateTokenCommandHandler.name);
+  }
 
   async execute(command: CreateTokenCommand): Promise<PersonalAccessEntity> {
     const { dto } = command;
@@ -21,6 +27,7 @@ export class CreateTokenCommandHandler
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
     try {
       const repo = queryRunner.manager.getRepository(PersonalAccessEntity);
 
@@ -38,10 +45,13 @@ export class CreateTokenCommandHandler
       await repo.save(tokenEntity);
       
       await queryRunner.commitTransaction();
+
+      this.logger.log('Refresh token created successfully');
       
       return tokenEntity;
     } catch (err) {
         await queryRunner.rollbackTransaction();
+        this.logger.error('Failed to create refresh token', err.message);
         throw err;
     } finally {
         await queryRunner.release();

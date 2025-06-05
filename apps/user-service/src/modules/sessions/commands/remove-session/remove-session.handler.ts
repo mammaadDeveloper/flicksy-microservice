@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { SessionEntity } from '../../entities/session.entity';
 import { NotFoundException } from '@nestjs/common';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @CommandHandler(RemoveSessionCommand)
 export class RemoveSessionCommandHandler
@@ -12,7 +13,10 @@ export class RemoveSessionCommandHandler
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-  ) {}
+    private readonly logger: AppLoggerService
+  ) {
+    logger.setContext(RemoveSessionCommandHandler.name);
+  }
   async execute(command: RemoveSessionCommand): Promise<void> {
     const {
       credential: { id, jti },
@@ -30,8 +34,11 @@ export class RemoveSessionCommandHandler
         throw new NotFoundException('Session not found.');
 
       await queryRunner.manager.remove(session);
+
+      this.logger.log('Session removed successfully');
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Failed to remove session', error.message);
       throw error;
     } finally {
       await queryRunner.release();

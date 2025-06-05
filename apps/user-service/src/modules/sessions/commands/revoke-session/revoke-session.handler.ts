@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, MoreThan } from 'typeorm';
 import { SessionEntity } from '../../entities/session.entity';
 import { UnauthorizedException } from '@nestjs/common';
+import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 
 @CommandHandler(RevokeSessionCommand)
 export class RevokeSessionCommandHandler
@@ -12,7 +13,11 @@ export class RevokeSessionCommandHandler
   constructor(
     @InjectDataSource()
     private readonly datasource: DataSource,
-  ) {}
+    private readonly logger: AppLoggerService
+  ) {
+    logger.setContext(RevokeSessionCommandHandler.name);
+  }
+
   async execute(command: RevokeSessionCommand): Promise<SessionEntity> {
     const { jti } = command;
     const queryRunner = this.datasource.createQueryRunner();
@@ -34,9 +39,12 @@ export class RevokeSessionCommandHandler
 
       await queryRunner.commitTransaction();
 
+      this.logger.log('Session revoked successfully');
+
       return sessionEntity;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      this.logger.error('Failed to revoking session', error.message);
       throw error;
     } finally {
       await queryRunner.release();
