@@ -24,7 +24,7 @@ export class PersonalAccessEntity{
     @TreeChildren()
     children: PersonalAccessEntity[];
 
-    @TreeParent()
+    @TreeParent({onDelete: 'CASCADE'})
     @JoinColumn({name: 'parent_id'})
     parent: PersonalAccessEntity;
 

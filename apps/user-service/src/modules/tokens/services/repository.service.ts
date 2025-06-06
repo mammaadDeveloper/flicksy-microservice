@@ -5,6 +5,7 @@ import { CreateTokenCommand } from '../commands/create-token/create-token.comman
 import { RevokeByJtiCommand } from '../commands/revoke-by-jti/revoke-by-jti.command';
 import { FindByJtiQuery } from '../queries/find-by-jti/find-by-jti.query';
 import { PersonalAccessEntity } from '../entities/token.entity';
+import { DeleteExpiredTokensCommand, DeleteRevokedTokensCommand } from '../commands';
 
 @Injectable()
 export class TokenRepositoryService {
@@ -22,5 +23,13 @@ export class TokenRepositoryService {
 
     async findByJti(jti: string): Promise<PersonalAccessEntity>{
         return await this.query.execute(new FindByJtiQuery(jti));
+    }
+
+    async deleteRevoked(): Promise<void>{
+        await this.command.execute(new DeleteRevokedTokensCommand());
+    }
+
+    async deleteExpired(): Promise<void>{
+        await this.command.execute(new DeleteExpiredTokensCommand());
     }
 }
