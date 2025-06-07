@@ -93,7 +93,8 @@ export class AuthService {
       user_agent: userAgent,
       userId: user.id,
     });
-    await this.sessionsService.leave(old.jti);
+    if(old)
+      await this.sessionsService.leave(old.jti);
     
 
     return { user, accessToken, refreshToken };

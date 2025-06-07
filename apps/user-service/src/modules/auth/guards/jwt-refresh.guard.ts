@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class JwtRefreshGuard extends AuthGuard('jwt-access') {
+export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {
   handleRequest(err, user, info) {
     if (err || !user) {
       throw new UnauthorizedException();

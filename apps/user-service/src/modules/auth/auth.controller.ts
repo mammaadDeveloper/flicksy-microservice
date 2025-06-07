@@ -1,20 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { response } from 'src/shared';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { IpAddress, UserAgent } from 'src/common';
+
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { JwtAccessGuard } from './guards/jwt-access.guard';
+import { SignupV1Dto } from './dto/signup.dto';
 import { SigninV1Dto } from './dto/signin.dto';
 import { AuthService } from './auth.service';
-import { SignupV1Dto } from './dto/signup.dto';
 import { UsersService } from '../users/users.service';
-import { IpAddress, UserAgent } from 'src/common';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
 
 @Controller({
   version: '1',
@@ -31,13 +26,15 @@ export class AuthController {
   async signUp(@Body() signUpV1Dto: SignupV1Dto) {
     const user = await this.authService.signUP(signUpV1Dto);
 
-    return {
-      statusCode: HttpStatus.CREATED,
+    return response({
       status: 'CREATED',
-      success: true,
       message: 'Sign up successful.',
-      user,
-    };
+      data: {
+        type: 'signup',
+        id: user.id,
+        attributes: user,
+      },
+    });
   }
 
   @Post('signin')
@@ -52,22 +49,25 @@ export class AuthController {
       ip,
       userAgent,
     );
-    return {
-      statusCode: HttpStatus.OK,
-      status: 'OK',
-      success: true,
+    return response({
       message: 'Sign in successful.',
-      user,
-      token: {
-        accessToken,
-        refreshToken,
+      data: {
+        type: 'signin',
+        id: user.id,
+        attributes: {
+          user,
+          token: {
+            accessToken,
+            refreshToken,
+          },
+        },
       },
-    };
+    });
   }
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @UseGuards(JwtRefreshGuard)
   async refresh(
     @GetUser() userData: { userId: number; jti: string },
     @IpAddress() ip: string,
@@ -80,35 +80,40 @@ export class AuthController {
       userAgent,
     );
 
-    return {
-      statusCode: HttpStatus.OK,
-      status: 'OK',
-      success: true,
+    return response({
       message: 'Token refreshed successfully.',
-      user,
-      token: {
-        accessToken,
-        refreshToken,
+      data: {
+        type: 'refresh',
+        id: user.id,
+        attributes: {
+          user,
+          token: {
+            accessToken,
+            refreshToken,
+          },
+        },
       },
-    };
+    });
   }
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseGuards(JwtAccessGuard)
   async me(@Req() req: any) {
     const user = await this.usersService.find(req.user['userId']);
 
-    return {
-      statusCode: HttpStatus.OK,
-      status: 'OK',
-      success: true,
+    return response({
       message: 'User retrieved successfully.',
-      user,
-    };
+      data: {
+        type: 'me',
+        id: user.id,
+        attributes: user
+      }
+    });
   }
 
   @Post('signout')
+  @UseGuards(JwtAccessGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async signout(@Req() req: any) {
     await this.authService.signout(req.jti);

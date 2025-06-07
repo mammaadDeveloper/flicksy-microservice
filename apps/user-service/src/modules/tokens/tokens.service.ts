@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserEntity } from '../users/entities/user.entity';
 import { v4 as uuidV4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
@@ -24,18 +28,9 @@ export class TokensService {
   ) {
     const jti = uuidV4();
 
-    const accessToken = this.jwtService.sign(
-      { sub: user.id },
-      { secret: this.configService.get('jwt.secret'), expiresIn: '15m' },
-    );
+    const accessToken = this.generateAccessToken(user.id);
 
-    const refreshToken = this.jwtService.sign(
-      { sub: user.id, jti },
-      {
-        secret: this.configService.get('jwt.refresh.secret'),
-        expiresIn: '30d',
-      },
-    );
+    const refreshToken = this.generateRefreshToken(user.id, jti);
 
     await this.repository.create({
       token: refreshToken,
@@ -43,7 +38,7 @@ export class TokensService {
       expiredAt: dayjs().add(30, 'day').toDate(),
       jti,
       type: 'refresh',
-      parent: options?.parent
+      parent: options?.parent,
     });
 
     return { accessToken, refreshToken, jti };
@@ -52,8 +47,20 @@ export class TokensService {
   async refreshToken(
     user: UserEntity,
     jti: string,
-  ): Promise<{ accessToken: string; refreshToken: string, old: PersonalAccessEntity }> {
-    const oldToken = await this.repository.revoke(jti);
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    old: PersonalAccessEntity;
+  }> {
+    const oldToken = await this.repository.findByUser(user.id);
+
+    if (oldToken.expiredAt > new Date()) {
+      const accessToken = this.generateAccessToken(user.id);
+
+      return { accessToken, refreshToken: '', old: oldToken };
+    }
+
+    await this.repository.revoke(jti);
 
     const { accessToken, refreshToken } = await this.generateToken(user, {
       parent: oldToken,
@@ -66,15 +73,34 @@ export class TokensService {
     await this.repository.revoke(jti);
   }
 
-  async findByJti(jti: string): Promise<PersonalAccessEntity>{
-    if(!jti)
-      throw new UnauthorizedException('Invalid refresh token')
+  async findByJti(jti: string): Promise<PersonalAccessEntity> {
+    if (!jti) throw new UnauthorizedException('Invalid refresh token');
 
     const token = await this.repository.findByJti(jti);
 
-    if(!token)
+    if (!token)
       throw new UnauthorizedException('Invalid refresh token or not found');
 
     return token;
+  }
+
+  generateAccessToken(userId: number): string {
+    return this.jwtService.sign(
+      { sub: userId },
+      {
+        secret: this.configService.get('jwt.secret'),
+        expiresIn: this.configService.get('jwt.expiresAt'),
+      },
+    );
+  }
+
+  generateRefreshToken(userId: number, jti: string) {
+    return this.jwtService.sign(
+      { sub: userId, jti },
+      {
+        secret: this.configService.get('jwt.refresh.secret'),
+        expiresIn: this.configService.get('jwt.refresh.expiresAt'),
+      },
+    );
   }
 }

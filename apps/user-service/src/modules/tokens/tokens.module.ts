@@ -10,6 +10,7 @@ import { TokenRepositoryService } from './services/repository.service';
 import { TokensService } from './tokens.service';
 import { CronTokensService } from './services/cron.service';
 import { DeleteExpiredTokensCommandHandler, DeleteRevokedTokensCommandHandler } from './commands';
+import { FindTokenByUserQueryHandler } from './queries';
 
 const commands = [
   CreateTokenCommandHandler,
@@ -18,7 +19,7 @@ const commands = [
   DeleteExpiredTokensCommandHandler
 ];
 
-const queries = [FindByJtiQueryHandler];
+const queries = [FindByJtiQueryHandler, FindTokenByUserQueryHandler];
 
 @Module({
   imports: [
