@@ -1,7 +1,7 @@
 import * as dayjs from 'dayjs';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
 import { PasswordCredentialsType } from 'src/shared/types/password-reset.type';
-import { PasswordResetTokenType } from 'src/shared/types/token.type';
+import { PasswordResetTokenEnum } from 'src/shared/enums/token.enum';
 
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -22,7 +22,7 @@ export class PasswordRepositoryService {
 
   async create(
     user: UserEntity,
-    type: PasswordResetTokenType,
+    type: PasswordResetTokenEnum,
     token: string | null,
   ): Promise<PasswordResetTokenEntity> {
     return await this.command.execute(
@@ -38,7 +38,7 @@ export class PasswordRepositoryService {
   async setUsed(
     userId: number,
     token: string,
-    type: PasswordResetTokenType,
+    type: PasswordResetTokenEnum,
   ): Promise<boolean> {
     try {
       await this.command.execute(new UseResetTokenCommand(userId, token, type));

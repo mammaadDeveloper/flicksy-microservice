@@ -1,5 +1,5 @@
 import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { PasswordResetTokenType } from 'src/shared/types/token.type';
+import { PasswordResetTokenEnum } from 'src/shared/enums/token.enum';
 import {
     Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 } from 'typeorm';
@@ -14,10 +14,10 @@ export class PasswordResetTokenEntity {
 
   @Column({
     type: 'enum',
-    enum: PasswordResetTokenType,
-    default: PasswordResetTokenType.LINK,
+    enum: PasswordResetTokenEnum,
+    default: PasswordResetTokenEnum.LINK,
   })
-  type: PasswordResetTokenType;
+  type: PasswordResetTokenEnum;
 
   @Column({ name: 'expired_at', type: 'timestamp' })
   expiredAt: Date;

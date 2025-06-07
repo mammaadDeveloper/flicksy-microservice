@@ -5,15 +5,15 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  Patch,
   Version,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CoreSessionService } from './services/core.service';
 import { response } from 'src/shared';
 import { GetUser } from 'src/common';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAccessGuard } from '../auth/guards/jwt-access.guard';
+import { SessionQueryDto } from './dto/session-query.dto';
 
 @Controller('sessions')
 export class SessionsController {
@@ -22,34 +22,18 @@ export class SessionsController {
   @Get()
   @UseGuards(JwtAccessGuard)
   @HttpCode(HttpStatus.OK)
-  async findAll(@GetUser() user: {userId: number}) {
-    const data = await this.sessionsService.findAll(user.userId);
+  async findAll(@GetUser() user: {userId: number}, @Query() query: SessionQueryDto) {
+
+    console.log('controller', query);
+    
+    const sessions = await this.sessionsService.findAll(user.userId, query);
 
     return response({
       message: 'Session list fetched successfully',
       data:{
         type: 'session list',
-        attributes: data,
+        attributes: sessions,
       },
-    });
-  }
-
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id') sessionId: string) {
-    const {id, instance} = await this.sessionsService.findOne(sessionId);
-
-    return response({
-      message: 'Session fetched successfully',
-      data:{
-        type: 'session',
-        id: id,
-        attributes: instance,
-        relationships: []
-      },
-      meta: {
-        previous: ''
-      }
     });
   }
 

@@ -7,6 +7,7 @@ import { SessionsRepositoryService } from './repository.service';
 import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
 import { plainToInstance } from 'class-transformer';
 import { SessionOutDto } from '../dto/session-response.dto';
+import { SessionQueryDto } from '../dto/session-query.dto';
 
 @Injectable()
 export class CoreSessionService {
@@ -17,8 +18,8 @@ export class CoreSessionService {
     logger.setContext(CoreSessionService.name);
   }
 
-  async findAll(userId: number): Promise<SessionOutDto[]> {
-    const sessions = await this.repository.findByUser(userId);
+  async findAll(userId: number, options?: SessionQueryDto): Promise<SessionOutDto[]> {
+    const sessions = await this.repository.findByUser(userId, options);
     return plainToInstance(SessionOutDto, sessions, {
       excludeExtraneousValues: true,
     });

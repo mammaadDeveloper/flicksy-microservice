@@ -6,6 +6,7 @@ import { CreateSessionDto } from '../dto/create-session.dto';
 import { SessionEntity } from '../entities/session.entity';
 import { FindSessionsByUserQuery, GetAllSessionsQuery } from '../queries';
 import { FindSessionByIdQuery } from '../queries/find-by-id/find-by-id.query';
+import { SessionQueryDto } from '../dto/session-query.dto';
 
 @Injectable()
 export class SessionsRepositoryService {
@@ -22,8 +23,8 @@ export class SessionsRepositoryService {
     return await this.query.execute(new FindSessionByIdQuery(id));
   }
 
-  async findByUser(userId: number){
-    return await this.query.execute(new FindSessionsByUserQuery(userId));
+  async findByUser(userId: number, options?: SessionQueryDto){
+    return await this.query.execute(new FindSessionsByUserQuery(userId, options));
   }
 
   async create(dto: CreateSessionDto) {

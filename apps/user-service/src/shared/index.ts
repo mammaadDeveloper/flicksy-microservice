@@ -1,6 +1,6 @@
 export * from './functions/response.fun';
 export * from './types/password-reset.type';
-export * from './types/token.type';
+export * from './enums/token.enum';
 export * from './utils/encryption/encryption.module';
 export * from './utils/encryption/encryption.service';
 export * from './utils/encryption/hashing.service';

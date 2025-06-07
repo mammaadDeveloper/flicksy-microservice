@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
-import { PasswordResetTokenType } from 'src/shared/types/token.type';
+import { PasswordResetTokenEnum } from 'src/shared/enums/token.enum';
 
 export class RequestPasswordResetDto {
   @IsNotEmpty({ message: 'Email is required' })
@@ -7,6 +7,6 @@ export class RequestPasswordResetDto {
   email: string;
 
   @IsNotEmpty()
-  @IsEnum(PasswordResetTokenType, { message: 'Invalid token type' })
-  type: PasswordResetTokenType;
+  @IsEnum(PasswordResetTokenEnum, { message: 'Invalid token type' })
+  type: PasswordResetTokenEnum;
 }

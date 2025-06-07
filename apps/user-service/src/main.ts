@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ConflictExceptionFilter, NotFoundExceptionFilter, ResponseInterceptor, UnauthorizedFilter } from './common';
 import { Logger as PinoLogger } from 'nestjs-pino';
@@ -11,6 +11,17 @@ async function bootstrap() {
   const config = app.get(ConfigService);
 
   app.useLogger(app.get(PinoLogger));
+
+  // Validation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
+      transform: true,
+      // disableErrorMessages: true
+    }),
+  );
 
   // Versioning
   app.enableVersioning({

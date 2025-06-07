@@ -1,11 +1,15 @@
+import { ProfileEntity } from "src/modules/profile/entities/profile.entity";
 import { PersonalAccessEntity } from "src/modules/tokens/entities/token.entity";
 import { hashString } from "src/shared/utils/hash.util";
-import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('users')
 export class UserEntity{
     @PrimaryGeneratedColumn('increment')
     id: number;
+
+    @OneToOne(() => ProfileEntity, profile => profile.user, {cascade: true})
+    profile: ProfileEntity;
 
     @Column({type: 'varchar', length: 20})
     username: string;

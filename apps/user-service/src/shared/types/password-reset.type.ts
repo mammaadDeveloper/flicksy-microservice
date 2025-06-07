@@ -1,8 +1,8 @@
 import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { PasswordResetTokenType } from './token.type';
+import { PasswordResetTokenEnum } from '../enums/token.enum';
 
 export type PasswordCredentialsType = {
   token: string;
-  type: PasswordResetTokenType;
+  type: PasswordResetTokenEnum;
   user?: UserEntity;
 };

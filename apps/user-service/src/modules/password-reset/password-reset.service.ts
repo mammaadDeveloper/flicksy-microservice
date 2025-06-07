@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PasswordRepositoryService } from './services/repository.service';
 import { UserEntity } from '../users/entities/user.entity';
-import { PasswordResetTokenType } from 'src/shared/types/token.type';
+import { PasswordResetTokenEnum } from 'src/shared/enums/token.enum';
 import { v4 as uuidV4 } from 'uuid';
 import { PasswordCredentialsType } from 'src/shared/types/password-reset.type';
 import { EncryptionService } from 'src/shared/utils/encryption/encryption.service';
@@ -20,10 +20,10 @@ export class PasswordResetService {
 
   async generate(
     user: UserEntity,
-    type: PasswordResetTokenType,
+    type: PasswordResetTokenEnum,
   ): Promise<string> {
     const tokenOrCode: string =
-      type === PasswordResetTokenType.CODE
+      type === PasswordResetTokenEnum.CODE
         ? Math.floor(100000 + Math.random() * 900000).toString()
         : uuidV4();
 
@@ -41,7 +41,7 @@ export class PasswordResetService {
 
   async verify(
     userId: number,
-    type: PasswordResetTokenType,
+    type: PasswordResetTokenEnum,
     token: string,
   ): Promise<boolean> {
     const encodedToken = this.encryption.encrypt(token);

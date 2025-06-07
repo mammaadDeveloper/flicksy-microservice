@@ -1,15 +1,15 @@
-export interface ResourceObject<Attributes = any, Relationships = any> {
+export type ResourceObject<Attributes = any, Relationships = any> = {
   type: string;
   id?: string | number;
   attributes: Attributes;
   relationships?: Relationships;
 }
-export interface ResponsePayload<T = ResourceObject<any, any> | ResourceObject<any, any>[]> {
+export interface ResponsePayload {
   //   statusCode: number;
   status?: string;
   //   success: boolean;
   message: string;
-  data: T;
+  data: ResourceObject | ResourceObject[];
   meta?: Record<string, any>;
   links?: Record<string, any>;
 }
@@ -46,12 +46,12 @@ export function validateResourceObject(obj: any): asserts obj is ResourceObject 
 
 
 
-export function response<T = ResourceObject<any, any> | ResourceObject<any, any>[]>(payload: ResponsePayload<T>) {
-  if (Array.isArray(payload.data)) {
-    payload.data.forEach(validateResourceObject);
-  } else {
-    validateResourceObject(payload.data);
-  }
+export function response(payload: ResponsePayload) {
+  // if (Array.isArray(payload.data)) {
+  //   payload.data.forEach(validateResourceObject);
+  // } else {
+  //   validateResourceObject(payload.data);
+  // }
 
   return { __formatted: true, ...payload };
 }

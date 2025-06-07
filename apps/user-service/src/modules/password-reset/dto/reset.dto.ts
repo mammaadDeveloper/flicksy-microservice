@@ -1,8 +1,8 @@
-import { PasswordResetTokenType } from "src/shared/types/token.type";
+import { PasswordResetTokenEnum } from "src/shared/enums/token.enum";
 
 export class ResetPasswordDto{
     email: string;
     token: string;
-    type: PasswordResetTokenType;
+    type: PasswordResetTokenEnum;
     newPassword: string;
 }

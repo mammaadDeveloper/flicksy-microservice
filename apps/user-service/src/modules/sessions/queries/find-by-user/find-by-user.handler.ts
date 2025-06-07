@@ -13,8 +13,18 @@ export class FindSessionsByUserQueryHandler
     private readonly repository: Repository<SessionEntity>,
   ) {}
   async execute(query: FindSessionsByUserQuery): Promise<SessionEntity[]> {
-    return await this.repository.find({
-      where: { user: { id: query.userId } },
-    });
+    const { id, jti, ipAddress, userAgent, isRevoked } = query.options;
+
+    const where: any = {
+      user: { id: query.userId },
+    };
+
+    if (id) where.id = id;
+    if (jti) where.jti = jti;
+    if (ipAddress) where.ipAddress = ipAddress;
+    if (userAgent) where.userAgent = userAgent;
+    if (typeof isRevoked === 'boolean') where.isRevoked = isRevoked;
+
+    return await this.repository.find({ where });
   }
 }
