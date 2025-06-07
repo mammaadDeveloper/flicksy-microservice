@@ -10,7 +10,7 @@ import {
   RevokeSessionCommandHandler,
 } from './commands';
 import { SessionsRepositoryService } from './services/repository.service';
-import { GetAllSessionsQueryHandler } from './queries';
+import { FindSessionByIdQueryHandler, FindSessionsByUserQueryHandler, GetAllSessionsQueryHandler } from './queries';
 import { CoreSessionService } from './services/core.service';
 import { CronSessionService } from './services/cron.service';
 
@@ -21,7 +21,7 @@ const commands = [
   DeleteExpiredSessionCommandHandler,
 ];
 
-const queries = [GetAllSessionsQueryHandler];
+const queries = [GetAllSessionsQueryHandler, FindSessionByIdQueryHandler, FindSessionsByUserQueryHandler];
 
 @Module({
   imports: [TypeOrmModule.forFeature([SessionEntity])],

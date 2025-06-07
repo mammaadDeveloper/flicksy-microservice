@@ -4,25 +4,35 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { SessionsRepositoryService } from './repository.service';
-import { SessionEntity } from '../entities/session.entity';
 import { AppLoggerService } from 'src/shared/utils/logger/logger.service';
+import { plainToInstance } from 'class-transformer';
+import { SessionOutDto } from '../dto/session-response.dto';
 
 @Injectable()
 export class CoreSessionService {
-  constructor(private readonly repository: SessionsRepositoryService, private readonly logger: AppLoggerService) {
+  constructor(
+    private readonly repository: SessionsRepositoryService,
+    private readonly logger: AppLoggerService,
+  ) {
     logger.setContext(CoreSessionService.name);
   }
 
-  async findAll(): Promise<SessionEntity[]> {
-    return await this.repository.findAll();
+  async findAll(userId: number): Promise<SessionOutDto[]> {
+    const sessions = await this.repository.findByUser(userId);
+    return plainToInstance(SessionOutDto, sessions, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  async findOne(id: string): Promise<SessionEntity> {
+  async findOne(id: string): Promise<{id: string, instance: SessionOutDto}> {
     const session = await this.repository.findById(id);
 
     if (!session) throw new NotFoundException('Session not found');
 
-    return session;
+    return {
+      id: session.id,
+      instance: plainToInstance(SessionOutDto, session, {excludeExtraneousValues: true})
+    };
   }
 
   async remove(token: string): Promise<void> | never {
@@ -37,9 +47,9 @@ export class CoreSessionService {
     }
   }
 
-  async leaveCurrent(jti: string): Promise<void>{
+  async leaveCurrent(jti: string): Promise<void> {
     await this.repository.revoke(jti);
-    this.logger.log('User leave current session', {jti});
+    this.logger.log('User leave current session', { jti });
   }
 
   async leaveOthers() {}
