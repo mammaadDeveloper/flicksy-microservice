@@ -8,6 +8,8 @@ import { RefreshTokenStrategy } from './strategies/refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionsModule } from '../sessions/sessions.module';
+import { JwtAccessGuard } from './guards/jwt-access.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
 @Module({
     imports: [
@@ -17,7 +19,7 @@ import { SessionsModule } from '../sessions/sessions.module';
         SessionsModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
-    exports: [AuthService],
+    providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy, JwtAccessGuard, JwtRefreshGuard],
+    exports: [AuthService, JwtAccessGuard],
 })
 export class AuthModule {}
