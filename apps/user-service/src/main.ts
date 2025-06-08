@@ -35,7 +35,12 @@ async function bootstrap() {
   });
 
   // CORS
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://my-front.com'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
+    credentials: true,
+  });
 
   // Helmet
   if (process.env.NODE_ENV === 'production')
