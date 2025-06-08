@@ -1,7 +1,8 @@
 import { Exclude, Expose } from "class-transformer";
+import { BaseDto } from "src/common";
 
 @Exclude()
-export class UsersCreateResponseDto{
+export class UsersCreateResponseDto extends BaseDto{
     @Expose()
     id: number;
 
@@ -9,10 +10,10 @@ export class UsersCreateResponseDto{
     username: string;
 
     @Expose()
-    email: string;
+    email?: string;
 
     @Expose()
-    phone: string;
+    phone?: string;
 
     @Expose()
     createdAt: Date;
