@@ -6,14 +6,16 @@ import { UserRepositoryService } from './services/repository.service';
 import { CoreUsersService } from './services/core.service';
 import { FindUserQueryHandler } from './queries/find/find.handler';
 import { FindUserByEmailQueryHandler } from './queries/find-by-email/find-by-email.handler';
+import { PasswordController } from './password.controller';
 import { UserEntity } from './entities/user.entity';
-import { CreateUserCommandHandler } from './commands';
+import { ChangePasswordCommandHandler, CreateUserCommandHandler } from './commands';
 
-const commands = [CreateUserCommandHandler];
+const commands = [CreateUserCommandHandler, ChangePasswordCommandHandler];
 
 const queries = [FindUserQueryHandler, FindUserByEmailQueryHandler];
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
+  controllers: [PasswordController],
   providers: [
     ...commands,
     ...queries,

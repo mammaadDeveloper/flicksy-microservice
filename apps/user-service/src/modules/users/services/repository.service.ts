@@ -5,6 +5,7 @@ import { CreateUserCommand } from '../commands/create/create.command';
 import { FindUserQuery } from '../queries/find/find.query';
 import { FindUserByEmailQuery } from '../queries/find-by-email/find-by-email.query';
 import { hashString } from 'src/shared/utils/hash.util';
+import { ChangePasswordCommand } from '../commands';
 
 @Injectable()
 export class UserRepositoryService {
@@ -23,5 +24,14 @@ export class UserRepositoryService {
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     return await this.query.execute(new FindUserByEmailQuery(email));
+  }
+
+  async changePassword(
+    user: UserEntity,
+    password: string,
+  ): Promise<UserEntity> {
+    return await this.command.execute(
+      new ChangePasswordCommand(user, password),
+    );
   }
 }
