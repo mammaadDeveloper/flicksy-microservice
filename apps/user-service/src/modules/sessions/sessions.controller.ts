@@ -14,19 +14,20 @@ import { response } from 'src/shared';
 import { GetUser } from 'src/common';
 import { JwtAccessGuard } from '../auth/guards/jwt-access.guard';
 import { SessionQueryDto } from './dto/session-query.dto';
+import { GetUserType } from 'src/shared/types/user.type';
 
 @Controller('sessions')
+@UseGuards(JwtAccessGuard)
 export class SessionsController {
   constructor(private readonly sessionsService: CoreSessionService) {}
 
   @Get()
-  @UseGuards(JwtAccessGuard)
   @HttpCode(HttpStatus.OK)
-  async findAll(@GetUser() user: {userId: number}, @Query() query: SessionQueryDto) {
+  async findAll(@GetUser() user: GetUserType, @Query() query: SessionQueryDto) {
 
     console.log('controller', query);
     
-    const sessions = await this.sessionsService.findAll(user.userId, query);
+    const sessions = await this.sessionsService.findAll(user.id, query);
 
     return response({
       message: 'Session list fetched successfully',

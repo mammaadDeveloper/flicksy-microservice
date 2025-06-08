@@ -10,6 +10,7 @@ import { SignupV1Dto } from './dto/signup.dto';
 import { SigninV1Dto } from './dto/signin.dto';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { GetUserType } from 'src/shared/types/user.type';
 
 @Controller({
   version: '1',
@@ -69,12 +70,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtRefreshGuard)
   async refresh(
-    @GetUser() userData: { userId: number; jti: string },
+    @GetUser() userData: GetUserType,
     @IpAddress() ip: string,
     @UserAgent() userAgent: string,
   ) {
     const { user, accessToken, refreshToken } = await this.authService.refresh(
-      userData.userId,
+      userData.id,
       userData.jti,
       ip,
       userAgent,
@@ -99,23 +100,23 @@ export class AuthController {
   @Get('me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAccessGuard)
-  async me(@Req() req: any) {
-    const user = await this.usersService.find(req.user['userId']);
+  async me(@GetUser() user: GetUserType) {
+    const info = await this.usersService.find(user.id);
 
     return response({
       message: 'User retrieved successfully.',
       data: {
         type: 'me',
         id: user.id,
-        attributes: user
+        attributes: info
       }
     });
   }
 
   @Post('signout')
-  @UseGuards(JwtAccessGuard)
+  @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async signout(@Req() req: any) {
-    await this.authService.signout(req.jti);
+  async signout(@GetUser() user: GetUserType) {
+    await this.authService.signout(user.jti);
   }
 }
