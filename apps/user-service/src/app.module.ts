@@ -17,6 +17,7 @@ import hashingConfig from './config/hashing.config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule } from 'nestjs-pino';
 import { LoggerModule as AppLoggerModule } from './shared/utils/logger/logger.module';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { LoggerModule as AppLoggerModule } from './shared/utils/logger/logger.mo
     PasswordResetModule,
     SessionsModule,
     AppLoggerModule,
+    ProfileModule,
   ]
 })
 export class AppModule {}
