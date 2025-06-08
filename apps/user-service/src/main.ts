@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ConflictExceptionFilter, NotFoundExceptionFilter, ResponseInterceptor, UnauthorizedFilter } from './common';
+import { BadRequestFilter, ConflictExceptionFilter, NotFoundExceptionFilter, ResponseInterceptor, UnauthorizedFilter } from './common';
 import { Logger as PinoLogger } from 'nestjs-pino';
 
 async function bootstrap() {
@@ -32,7 +32,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Filters
-  app.useGlobalFilters(new NotFoundExceptionFilter(), new ConflictExceptionFilter(), new UnauthorizedFilter());
+  app.useGlobalFilters(new NotFoundExceptionFilter(), new ConflictExceptionFilter(), new UnauthorizedFilter(), new BadRequestFilter());
 
   // Serialization
   app.useGlobalInterceptors(new ResponseInterceptor());
