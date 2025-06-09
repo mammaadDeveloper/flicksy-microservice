@@ -6,7 +6,7 @@ import {
 
 import { ProfileRepository } from './services/repository';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { ProfileCreateFormattedDto, UpdateAvatarDto, UpdateProfileDto } from './dto';
+import { ProfileCreateFormattedDto, UpdateProfileDto } from './dto';
 import { UserEntity } from '../users/entities/user.entity';
 import { plainToInstance } from 'class-transformer';
 
@@ -46,8 +46,8 @@ export class ProfileService {
     });
   }
 
-  async updateAvatar(userId: number, data: UpdateAvatarDto){
-    const result = await this.repository.update(userId, data);
+  async updateAvatar(userId: number, avatar: string){
+    const result = await this.repository.update(userId, {avatar});
 
     return plainToInstance(ProfileCreateFormattedDto, result, {excludeExtraneousValues: true});
   }

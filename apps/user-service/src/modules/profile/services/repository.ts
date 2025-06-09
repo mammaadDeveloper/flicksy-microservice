@@ -4,7 +4,7 @@ import { GetProfileByUserQuery } from '../queries';
 import { ProfileEntity } from '../entities/profile.entity';
 import { CreateProfileDto } from '../dto/create-profile.dto';
 import { CreateProfileCommand, UpdateProfileCommand } from '../commands';
-import { UpdateAvatarDto, UpdateProfileDto } from '../dto';
+import { UpdateProfileDto } from '../dto';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class ProfileRepository {
     return await this.command.execute(new CreateProfileCommand(user, data));
   }
 
-  async update(userId: number, data: UpdateProfileDto | UpdateAvatarDto){
-    return this.command.execute(new UpdateProfileCommand(userId, data));
+  async update(userId: number, avatar: any){
+    return this.command.execute(new UpdateProfileCommand(userId, avatar));
   }
 }
