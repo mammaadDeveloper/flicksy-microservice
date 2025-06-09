@@ -18,6 +18,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule } from 'nestjs-pino';
 import { LoggerModule as AppLoggerModule } from './shared/utils/logger/logger.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -37,6 +39,13 @@ import { ProfileModule } from './modules/profile/profile.module';
         logging: false,
         autoLoadEntities: true,
       }),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+      serveStaticOptions: {
+        index: false
+      }
     }),
     CqrsModule.forRoot(),
     ScheduleModule.forRoot(),
