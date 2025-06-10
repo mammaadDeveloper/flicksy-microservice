@@ -20,13 +20,14 @@ import { LoggerModule as AppLoggerModule } from './shared/utils/logger/logger.mo
 import { ProfileModule } from './modules/profile/profile.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import grpcConfig from './config/grpc.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '../../../.env'],
-      load: [appConfig, databaseConfig, jwtConfig, hashingConfig],
+      load: [appConfig, databaseConfig, jwtConfig, grpcConfig, hashingConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

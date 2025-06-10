@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user;
+
+service UsersService{
+    rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message ValidateTokenRequest {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+message ValidateTokenResponse{
+    int32 id = 1;
+    string jti = 2;
+}

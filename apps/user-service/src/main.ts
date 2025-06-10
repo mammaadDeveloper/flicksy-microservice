@@ -11,13 +11,30 @@ import {
 } from './common';
 import { Logger as PinoLogger } from 'nestjs-pino';
 import helmet from 'helmet';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
+  // Config
   const config = app.get(ConfigService);
+  
+  // Logger
+  const logger = app.get(PinoLogger)
+  app.useLogger(logger);
 
-  app.useLogger(app.get(PinoLogger));
+  // Microservices
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      package: config.get('grpc.package'),
+      protoPath: join(__dirname, 'proto', config.get('grpc.proto')),
+      url: config.get('grpc.url')
+    }
+  });
+  await app.startAllMicroservices();
+
 
   // Validation
   app.useGlobalPipes(
@@ -118,6 +135,8 @@ async function bootstrap() {
   // Serialization
   app.useGlobalInterceptors(new ResponseInterceptor());
 
-  await app.listen(config.get('app.port'));
+  await app.listen(config.get<number>('app.port'));
+  logger.log(`Application started on port: ${config.get('app.port')}`);
+  logger.log(`Application grpc started on: ${config.get('grpc.url')}`);
 }
 bootstrap();
