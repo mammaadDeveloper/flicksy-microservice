@@ -1,22 +1,19 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { Service } from './service.service';
 import { MicroServiceEntity } from './service.entity';
 import { ServiceController } from './service.controller';
-import { APP_GUARD } from '@nestjs/core';
-import { ServiceGuard } from './service.guard';
+import * as bodyParser from 'body-parser';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MicroServiceEntity])],
   controllers: [ServiceController],
-  providers: [
-    Service,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ServiceGuard,
-    // },
-  ],
+  providers: [Service],
   exports: [Service],
 })
-export class ServiceModule {}
+export class ServiceModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(bodyParser.json({type: 'application/json'})).forRoutes(ServiceController);
+  }
+}

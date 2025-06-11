@@ -13,6 +13,6 @@ export class ServiceController {
   }
   @Post()
   async create(@Body() body: CreateServiceDto) {
-    return await this.service.createService(body.name, body.url, body.protect);
+    // return await this.service.createService(body.name, body.url, body.protect);
   }
 }

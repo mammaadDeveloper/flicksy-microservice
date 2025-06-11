@@ -13,6 +13,7 @@ import { Logger as PinoLogger } from 'nestjs-pino';
 import helmet from 'helmet';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true, bodyParser: false });
@@ -22,6 +23,9 @@ async function bootstrap() {
 
   // Prefix
   app.setGlobalPrefix('api');
+
+  // Body parser
+  app.use(bodyParser.json({type: 'application/json'}))
   
   // Logger
   const logger = app.get(PinoLogger)
