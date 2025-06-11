@@ -15,7 +15,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, bodyParser: false });
 
   // Config
   const config = app.get(ConfigService);

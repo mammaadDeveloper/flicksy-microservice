@@ -12,10 +12,10 @@ import { ServiceGuard } from './service.guard';
   controllers: [ServiceController],
   providers: [
     Service,
-    {
-      provide: APP_GUARD,
-      useClass: ServiceGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ServiceGuard,
+    // },
   ],
   exports: [Service],
 })

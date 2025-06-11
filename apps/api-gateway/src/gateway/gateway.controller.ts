@@ -19,20 +19,30 @@ export class GatewayController {
         message: 'Target not defined',
       });
 
+      // console.log(target);
+      
+
     const proxy = createProxyMiddleware({
       target,
       changeOrigin: true,
-      pathRewrite: {
-        [`^/api/v1/${req.headers['x-service-name']}`]: '',
-      },
+      timeout: 20000,
+      // pathRewrite: {
+      //   [`^/api/v1/${req.headers['x-service-name']}`]: '',
+      // },
       on: {
         proxyReq: (proxyReq, req) => {
           if (req.headers['x-user-id']) {
             proxyReq.setHeader('x-user-id', req.headers['x-user-id'] as string);
           }
         },
+        proxyRes: (proxyRes, req) => {
+          console.log(proxyRes);
+          
+        },
         error: (err, req: Request, res: Response) => {
-          res.writeHead(500, { 'Content-Type': 'application/json' });
+          console.log(err);
+          
+          res.writeHead(502, { 'Content-Type': 'application/json' });
           res.end(
             JSON.stringify({ error: 'Proxy error', details: err.message }),
           );
