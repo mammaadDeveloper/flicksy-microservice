@@ -2,16 +2,14 @@ syntax = "proto3";
 
 package user;
 
-service UsersService{
-    rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse);
+service UserService {
+  rpc VerifyToken(TokenRequest) returns (TokenResponse);
 }
 
-message ValidateTokenRequest {
-    string access_token = 1;
-    string refresh_token = 2;
+message TokenRequest {
+  string token = 1;
 }
 
-message ValidateTokenResponse{
-    int32 id = 1;
-    string jti = 2;
+message TokenResponse {
+  string userId = 1;
 }

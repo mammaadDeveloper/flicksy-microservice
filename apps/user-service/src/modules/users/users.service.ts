@@ -9,8 +9,13 @@ export class UsersService {
   private readonly logger = new Logger(UsersService.name);
   constructor(private readonly repository: UserRepositoryService) {}
 
-  async find(id: number): Promise<UserEntity> {
-    return await this.repository.find(id);
+  async find(id: number): Promise<UserEntity | null> {
+    const user = await this.repository.find(id);
+
+    if(!user)
+      return null;
+
+    return user;
   }
 
   async findWithFormat(id: number): Promise<UsersCreateResponseDto>{

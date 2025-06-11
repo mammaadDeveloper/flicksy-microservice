@@ -11,7 +11,7 @@ export class FindUserQueryHandler implements IQueryHandler<FindUserQuery>{
         private readonly repository: Repository<UserEntity>
     ){}
     async execute(query: FindUserQuery): Promise<UserEntity> {
-        return await this.repository.findOneByOrFail({id: query.id});
+        return await this.repository.findOneBy({id: query.id});
     }
 
 }

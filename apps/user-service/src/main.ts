@@ -19,6 +19,9 @@ async function bootstrap() {
 
   // Config
   const config = app.get(ConfigService);
+
+  // Prefix
+  app.setGlobalPrefix('api');
   
   // Logger
   const logger = app.get(PinoLogger)

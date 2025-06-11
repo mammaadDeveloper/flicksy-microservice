@@ -104,7 +104,7 @@ export class AuthController {
     const info = await this.usersService.find(user.id);
 
     return response({
-      message: 'User retrieved successfully.',
+      message: 'User information was successfully retrieved.',
       data: {
         type: 'me',
         id: user.id,
@@ -114,7 +114,7 @@ export class AuthController {
   }
 
   @Post('signout')
-  @UseGuards(JwtRefreshGuard)
+  @UseGuards(JwtAccessGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async signout(@GetUser() user: GetUserType) {
     await this.authService.signout(user.jti);
