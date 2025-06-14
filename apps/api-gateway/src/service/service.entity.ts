@@ -11,6 +11,9 @@ export class MicroServiceEntity{
     @Column({name: 'base_url'})
     baseUrl: string;
 
-    @Column({name: 'is_protected', default: false})
-    isProtected: boolean;
+    @Column({type: 'simple-json', name: 'protected_routes', nullable: true})
+    protectedRoutes: string[];
+
+    @Column({default: 'unknown'})
+    status: 'up' | 'down' | 'degraded' | 'unknown';
 }

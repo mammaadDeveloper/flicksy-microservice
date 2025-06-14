@@ -3,7 +3,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { NextFunction, Request, Response } from 'express';
 
 import {
-    BadRequestException, Injectable, NestMiddleware, NotFoundException, UnauthorizedException
+    BadRequestException, Injectable, NestMiddleware, NotFoundException, ServiceUnavailableException, UnauthorizedException
 } from '@nestjs/common';
 
 @Injectable()
@@ -21,7 +21,17 @@ export class GatewayMiddleware implements NestMiddleware {
     const service = await this.service.findByName(serviceName);
     if (!service) throw new NotFoundException('Service not found');
 
-    if (service.isProtected) {
+    if(service.status == 'down')
+      throw new ServiceUnavailableException(`Service ${serviceName} is down`);
+
+    const method = req.method.toUpperCase();
+    const fullPath = new URL(req.url, 'http://localhost').pathname.replace(`/${serviceName}`, '').replace('/api', '');
+
+    const routeKey = `${method} ${fullPath}`;
+
+    const needAuth = Array.isArray(service.protectedRoutes) && service.protectedRoutes.includes(routeKey);
+
+    if (needAuth) {
       const token = req.headers['authorization']?.split(' ')[1];
       if (!token) throw new UnauthorizedException('Missing token');
 
@@ -31,6 +41,8 @@ export class GatewayMiddleware implements NestMiddleware {
       } catch (err) {
         throw new UnauthorizedException('Invalid token');
       }
+    }else{
+      throw new UnauthorizedException('Missing token');
     }
 
     req.url = req.url.replace(`/${serviceName}`, '');

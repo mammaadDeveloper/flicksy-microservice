@@ -10,16 +10,20 @@ export class Service {
     private readonly repository: Repository<MicroServiceEntity>,
   ) {}
 
-  async findAll(): Promise<MicroServiceEntity[]>{
+  async findAll(): Promise<MicroServiceEntity[]> {
     return await this.repository.find();
   }
 
   async findByName(name: string): Promise<MicroServiceEntity | null> {
     return await this.repository.findOne({ where: { name } });
   }
-  async createService(name: string, baseUrl: string, isProtected?: boolean) {
+  async createService(
+    name: string,
+    baseUrl: string,
+    protectedRoutes?: string[],
+  ) {
     return await this.repository.save(
-      this.repository.create({ name, baseUrl, isProtected }),
+      this.repository.create({ name, baseUrl, protectedRoutes }),
     );
   }
 }

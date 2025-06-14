@@ -5,11 +5,14 @@ import { Service } from './service.service';
 import { MicroServiceEntity } from './service.entity';
 import { ServiceController } from './service.controller';
 import * as bodyParser from 'body-parser';
+import { ScheduleModule } from '@nestjs/schedule';
+import { HttpModule } from '@nestjs/axios';
+import { CronService } from './cron.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MicroServiceEntity])],
+  imports: [TypeOrmModule.forFeature([MicroServiceEntity]), ScheduleModule.forRoot(), HttpModule],
   controllers: [ServiceController],
-  providers: [Service],
+  providers: [Service, CronService],
   exports: [Service],
 })
 export class ServiceModule implements NestModule {
