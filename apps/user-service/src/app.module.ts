@@ -20,6 +20,7 @@ import { LoggerModule as AppLoggerModule } from './shared/utils/logger/logger.mo
 import { ProfileModule } from './modules/profile/profile.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { HealthModule } from './modules/health/health.module';
 import grpcConfig from './config/grpc.config';
 
 @Module({
@@ -79,6 +80,7 @@ import grpcConfig from './config/grpc.config';
     SessionsModule,
     AppLoggerModule,
     ProfileModule,
+    HealthModule,
   ]
 })
 export class AppModule {}
