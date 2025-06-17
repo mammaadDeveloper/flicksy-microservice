@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthModule } from './modules/health/health.module';
+import { MoviesModule } from './modules/movies/movies.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 
@@ -26,6 +27,7 @@ import databaseConfig from './config/database.config';
     }),
     CqrsModule.forRoot(),
     HealthModule,
+    MoviesModule,
   ],
 })
 export class AppModule {}
