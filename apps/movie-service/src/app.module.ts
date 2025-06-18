@@ -4,8 +4,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthModule } from './modules/health/health.module';
 import { MoviesModule } from './modules/movies/movies.module';
+import { SourcesModule } from './modules/sources/sources.module';
+import { TrailersModule } from './modules/trailers/trailers.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
+import { LoggerModule } from 'nestjs-pino';
+import { LoggerModule as AppLoggerModule } from './shared';
 
 @Module({
   imports: [
@@ -26,8 +30,25 @@ import databaseConfig from './config/database.config';
       }),
     }),
     CqrsModule.forRoot(),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            levelFirst: true,
+            translateTime: 'yyyy-mm-dd HH:MM:ss.l',
+            ignore: 'pid,hostname',
+            messageFormat: '{method} {url} {msg} - {res.statusCode}',
+          },
+        },
+      },
+    }),
     HealthModule,
     MoviesModule,
+    SourcesModule,
+    TrailersModule,
+    AppLoggerModule,
   ],
 })
 export class AppModule {}

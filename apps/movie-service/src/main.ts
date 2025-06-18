@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { json } from 'body-parser';
 import { VersioningType } from '@nestjs/common';
+import { Logger as PinoLogger } from 'nestjs-pino';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -24,6 +25,10 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
+  // Logger
+  const logger = app.get(PinoLogger);
+  app.useLogger(logger);
+
   // CORS
   app.enableCors({
     origin: ['http://localhost:3000', 'https://my-front.com'],
@@ -33,5 +38,7 @@ async function bootstrap() {
   });
 
   await app.listen(config.get<number>('app.port'));
+
+  logger.log(`Application started on port: ${config.get<number>('app.port')}`);
 }
 bootstrap();

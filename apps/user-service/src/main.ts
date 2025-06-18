@@ -14,9 +14,10 @@ import helmet from 'helmet';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import * as bodyParser from 'body-parser';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true, bodyParser: false });
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { bufferLogs: true, bodyParser: false });
 
   // Config
   const config = app.get(ConfigService);
@@ -28,7 +29,7 @@ async function bootstrap() {
   app.use(bodyParser.json({type: 'application/json'}))
   
   // Logger
-  const logger = app.get(PinoLogger)
+  const logger = app.get(PinoLogger);
   app.useLogger(logger);
 
   // Microservices
