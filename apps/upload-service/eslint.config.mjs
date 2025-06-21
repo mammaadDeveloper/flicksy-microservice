@@ -44,7 +44,7 @@ export default tseslint.config(
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'no-debugger': 'error',
-      'linebreak-style': ['error', 'unix'],
+      'linebreak-style': 0,
       'prefer-const': 'warn',
       'no-var': 'error',
       'no-underscore-dangle': 'off',
