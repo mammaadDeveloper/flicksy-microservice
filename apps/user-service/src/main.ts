@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { RequestMethod, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   BadRequestFilter,
@@ -14,20 +14,27 @@ import helmet from 'helmet';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import * as bodyParser from 'body-parser';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { bufferLogs: true, bodyParser: false });
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    bodyParser: false,
+  });
 
   // Config
   const config = app.get(ConfigService);
 
   // Prefix
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [{ path: 'health', method: RequestMethod.GET }],
+  });
 
   // Body parser
-  app.use(bodyParser.json({type: 'application/json'}))
-  
+  app.use(bodyParser.json());
+
+  // Multipart
+  // await app.register(fastifyMultipart);
+
   // Logger
   const logger = app.get(PinoLogger);
   app.useLogger(logger);
@@ -38,11 +45,10 @@ async function bootstrap() {
     options: {
       package: config.get('grpc.package'),
       protoPath: join(__dirname, 'proto', config.get('grpc.proto')),
-      url: config.get('grpc.url')
-    }
+      url: config.get('grpc.url'),
+    },
   });
   await app.startAllMicroservices();
-
 
   // Validation
   app.useGlobalPipes(

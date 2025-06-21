@@ -3,6 +3,7 @@ import { UpdateProfileCommand } from './update.command';
 import { DataSource } from 'typeorm';
 import { ProfileEntity } from '../../entities/profile.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { NotFoundException } from '@nestjs/common';
 
 @CommandHandler(UpdateProfileCommand)
 export class UpdateProfileCommandHandler
@@ -28,7 +29,7 @@ export class UpdateProfileCommandHandler
       });
 
       if(!profile)
-        throw new Error('Profile not found');
+        throw new NotFoundException('Profile not found');
 
       Object.assign(profile, data);
 

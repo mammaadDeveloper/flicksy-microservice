@@ -20,14 +20,14 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
       const message =
         typeof res === 'string' ? res : (res?.message ?? 'Not found');
 
-      response.status(status).json({
+      response.status(status).send({
         statusCode: status,
         error: 'NOT FOUND',
         success: false,
         message,
       });
     }else
-      response.status(HttpStatus.NOT_FOUND).json({
+      response.status(HttpStatus.NOT_FOUND).send({
         statusCode: HttpStatus.NOT_FOUND,
         error: 'NOT FOUND',
         success: false,

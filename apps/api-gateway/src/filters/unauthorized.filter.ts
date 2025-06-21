@@ -1,6 +1,11 @@
 import { Response } from 'express';
 
-import { ArgumentsHost, Catch, ExceptionFilter, UnauthorizedException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 @Catch(UnauthorizedException)
 export class UnauthorizedFilter implements ExceptionFilter {
@@ -12,7 +17,7 @@ export class UnauthorizedFilter implements ExceptionFilter {
       statusCode: 401,
       status: 'UNAUTHORIZED',
       success: false,
-      message: 'Unauthorized access'
+      message: exception.message ?? 'Unauthorized access',
     });
   }
 }

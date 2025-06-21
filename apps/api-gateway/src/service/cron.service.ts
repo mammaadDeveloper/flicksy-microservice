@@ -22,7 +22,7 @@ export class CronService {
     for (const svc of services) {
       try {
         const response = await this.http
-          .get(`${svc.baseUrl}/api/health`, { timeout: 5000 })
+          .get(`${svc.baseUrl}/health`, { timeout: 5000 })
           .toPromise();
         const status = response.data.status === 'ok' ? 'up' : 'degraded';
 

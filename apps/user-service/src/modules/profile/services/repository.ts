@@ -22,7 +22,7 @@ export class ProfileRepository {
     return await this.command.execute(new CreateProfileCommand(user, data));
   }
 
-  async update(userId: number, avatar: any){
-    return this.command.execute(new UpdateProfileCommand(userId, avatar));
+  async update(userId: number, data: any){
+    return this.command.execute(new UpdateProfileCommand(userId, data));
   }
 }

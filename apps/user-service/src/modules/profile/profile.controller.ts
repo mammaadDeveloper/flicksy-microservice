@@ -6,9 +6,7 @@ import {
   HttpStatus,
   Patch,
   Post,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { JwtAccessGuard } from '../auth/guards/jwt-access.guard';
@@ -17,8 +15,6 @@ import { GetUser } from 'src/common';
 import { GetUserType } from 'src/shared/types/user.type';
 import { UsersService } from '../users/users.service';
 import { CreateProfileDto, UpdateProfileDto } from './dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { avatarMulterOptions } from './avatar.config';
 
 @Controller('profile')
 @UseGuards(JwtAccessGuard)
@@ -87,12 +83,11 @@ export class ProfileController {
   }
 
   @Patch('avatar')
-  @UseInterceptors(FileInterceptor('avatar', avatarMulterOptions))
   async updateAvatar(
     @GetUser() user: GetUserType,
-    @UploadedFile() file: Express.Multer.File
+    @Body('avatar') avatar: string,
   ) {
-    const result = await this.profileService.updateAvatar(user.id, file.filename);
+    const result = await this.profileService.updateAvatar(user.id, avatar);
 
     return response({
       message: 'Profile avatar updated successfully',

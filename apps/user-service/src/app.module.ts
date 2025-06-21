@@ -42,13 +42,6 @@ import grpcConfig from './config/grpc.config';
         autoLoadEntities: true,
       }),
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: '/uploads',
-      serveStaticOptions: {
-        index: false
-      }
-    }),
     CqrsModule.forRoot(),
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({

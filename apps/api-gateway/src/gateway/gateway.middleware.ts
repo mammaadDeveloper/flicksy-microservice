@@ -41,8 +41,6 @@ export class GatewayMiddleware implements NestMiddleware {
       } catch (err) {
         throw new UnauthorizedException('Invalid token');
       }
-    }else{
-      throw new UnauthorizedException('Missing token');
     }
 
     req.url = req.url.replace(`/${serviceName}`, '');
