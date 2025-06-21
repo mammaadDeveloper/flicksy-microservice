@@ -4,17 +4,20 @@ import { v4 as uuidV4 } from 'uuid';
 import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable } from '@nestjs/common';
 
 import { CreateImageCommand } from './commands';
+import { FindByIdQuery } from './queries';
+import { ImageEntity } from './entities/image.entity';
 
 @Injectable()
 export class ImagesService {
   constructor(
     private readonly command: CommandBus,
+    private readonly query: QueryBus,
     private readonly configService: ConfigService,
   ) {}
   async upload(
@@ -55,5 +58,9 @@ export class ImagesService {
       size: image?.size,
       url: `${this.configService.get('app.static.url')}${trimmedPrefix ? `/${trimmedPrefix}/` : '/'}${image?.filename}`,
     };
+  }
+
+  async findById(id: string): Promise<ImageEntity | null> {
+    return await this.query.execute(new FindByIdQuery(id));
   }
 }

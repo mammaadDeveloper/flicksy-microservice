@@ -1,13 +1,19 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from '../images/images.service';
-import { join } from 'path';
+import { basename, join } from 'path';
+import { createReadStream } from 'fs';
+import { Response } from 'express';
 
 @Controller({
   path: 'avatars',
@@ -15,6 +21,40 @@ import { join } from 'path';
 })
 export class AvatarsController {
   constructor(private readonly imageService: ImagesService) {}
+
+  @Get(':id')
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Res() res: Response,
+  ): Promise<Response> {
+    const image = await this.imageService.findById(id);
+
+    if (!image) {
+      return res.status(404).json({
+        statusCode: 404,
+        status: 'NOT_FOUND',
+        success: false,
+        message: 'Image not found',
+      });
+    }
+
+    const filePath = join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'uploads',
+      'avatars',
+      basename(image.path),
+    );
+
+    const stream = createReadStream(filePath);
+    res.set({
+      'Content-Type': image.mimetype,
+      'Content-Disposition': `inline; filename="${image.filename}"`,
+    });
+    return stream.pipe(res);
+  }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
