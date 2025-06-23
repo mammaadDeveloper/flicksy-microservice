@@ -24,7 +24,7 @@ export class MoviesController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(@Query() options: GetMoviesWithPaginateDto): Promise<unknown> {
-    const page = options.page ?? 1;
+    const page = Number(options.page) ?? 1;
     const limit = options.limit ?? 10;
 
     const movies = await this.service.findAll({ ...options, page, limit });
@@ -41,9 +41,9 @@ export class MoviesController {
         totalPages,
       },
       links: {
-        self: `/movies?page=${page}`,
-        next: page < totalPages ? `/movies?page=${page + 1}` : null,
-        perv: page > 1 ? `/movies?page=${page - 1}` : null,
+        self: `/api/v1/movies?page=${page}`,
+        next: page < totalPages ? `/api/v1/movies?page=${page + 1}` : null,
+        perv: page > 1 ? `/api/v1/movies?page=${page - 1}` : null,
       },
     });
   }
@@ -62,11 +62,11 @@ export class MoviesController {
 
   @Post()
   async createMovie(@Body() body: CreateMovieDto): Promise<unknown> {
-    const movie = await this.service.createMovie(body);
+    const { attributes, relationships } = await this.service.createMovie(body);
 
     return response({
       message: 'The movie information was successfully recorded.',
-      data: { type: 'create movie', attributes: movie },
+      data: { type: 'create movie', attributes, relationships },
     });
   }
 }

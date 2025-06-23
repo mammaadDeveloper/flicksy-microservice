@@ -12,6 +12,8 @@ import {
 import { MoviesRepository } from './services/repository';
 import { CreateMovieHandler } from './commands';
 import { PostersModule } from '../posters/posters.module';
+import { SourcesModule } from '../sources/sources.module';
+import { TrailersModule } from '../trailers/trailers.module';
 
 const commands = [CreateMovieHandler];
 
@@ -22,7 +24,12 @@ const queries = [
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MovieEntity]), PostersModule],
+  imports: [
+    TypeOrmModule.forFeature([MovieEntity]),
+    PostersModule,
+    SourcesModule,
+    TrailersModule,
+  ],
   controllers: [MoviesController],
   providers: [
     ...commands,

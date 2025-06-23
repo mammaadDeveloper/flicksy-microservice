@@ -19,3 +19,9 @@ export class CreateTrailerDto {
   @IsString()
   file?: string;
 }
+
+export class AddTrailerCommand {
+  title: string;
+  duration: number;
+  file?: string;
+}

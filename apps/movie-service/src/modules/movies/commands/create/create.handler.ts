@@ -16,6 +16,8 @@ export class CreateMovieHandler implements ICommandHandler<CreateMovieCommand> {
   ) {}
 
   async execute(command: CreateMovieCommand): Promise<MovieEntity> {
+    const { director, slug, summary, title, year, description, releaseDate } =
+      command.data;
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -23,7 +25,13 @@ export class CreateMovieHandler implements ICommandHandler<CreateMovieCommand> {
 
     try {
       const movie = queryRunner.manager.create(MovieEntity, {
-        ...command.data,
+        director,
+        slug,
+        summary,
+        title,
+        year,
+        description,
+        releaseDate,
       });
 
       await queryRunner.manager.save(movie);

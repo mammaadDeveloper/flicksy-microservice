@@ -43,8 +43,9 @@ async function bootstrap() {
   // Interceptor
   app.useGlobalInterceptors(new ResponseInterceptor());
 
-  await app.listen(config.get<number>('app.port'));
+  const port = config.get<number>('app.port') ?? 3000;
+  await app.listen(port);
 
-  logger.log(`Application started on port: ${config.get<number>('app.port')}`);
+  logger.log(`Application started on port: ${port}`);
 }
 bootstrap();

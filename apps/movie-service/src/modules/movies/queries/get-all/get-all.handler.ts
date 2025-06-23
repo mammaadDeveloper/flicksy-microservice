@@ -13,8 +13,14 @@ export class GetAllMoviesWithPaginateHandler
     private readonly repository: Repository<MovieEntity>,
   ) {}
   async execute(query: GetAllWithPaginateQuery): Promise<MovieEntity[]> {
-    const { trailer, source, poster, page, limit } = query.options;
-    const relations = [];
+    const {
+      trailer,
+      source,
+      poster,
+      page = 1,
+      limit = 10,
+    } = query.options ?? {};
+    const relations: string[] = [];
 
     if (trailer) relations.push('trailers');
     if (source) relations.push('sources');
@@ -22,6 +28,7 @@ export class GetAllMoviesWithPaginateHandler
 
     return await this.repository.find({
       relations,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       take: limit,
       skip: (page - 1) * limit,
     });
