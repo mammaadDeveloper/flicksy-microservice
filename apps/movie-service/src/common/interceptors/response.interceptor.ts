@@ -14,7 +14,7 @@ export class ResponseInterceptor implements NestInterceptor {
       const {status, message, data, meta, links} = body;
 
       return {
-        statusCode: res.status,
+        statusCode: res.statusCode,
         status: status ?? 'OK',
         success: true,
         message,
