@@ -29,3 +29,11 @@ export class CreateSourceDto {
   @IsString()
   encoding?: string;
 }
+
+export class AddSourceCommand {
+  quality: VideoQualityEnum;
+  size: number;
+  file?: string;
+  subtileFileIds?: string[];
+  encoding?: string;
+}

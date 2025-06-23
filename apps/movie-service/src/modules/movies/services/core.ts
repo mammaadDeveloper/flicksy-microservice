@@ -6,12 +6,14 @@ import { plainToInstance } from 'class-transformer';
 import { MovieResponseDto } from '../dto/response.dto';
 import { CreateMovieDto } from '../dto/create-movie.dto';
 import { PostersService } from 'src/modules/posters/posters.service';
+import { SourcesService } from 'src/modules/sources/sources.service';
 
 @Injectable()
 export class CoreMoviesService {
   constructor(
     private readonly repository: MoviesRepository,
     private readonly postersService: PostersService,
+    private readonly sourcesService: SourcesService,
   ) {}
 
   async findAll(
@@ -41,10 +43,11 @@ export class CoreMoviesService {
     const movie = await this.repository.create(data);
 
     if (data.posters) {
-      const poster = await this.postersService.create(data.posters);
+      const posters = await this.postersService.create(data.posters);
     }
 
     if (data.sources) {
+      const sources = await this.sourcesService.create(data.sources);
     }
 
     if (data.trailers) {
