@@ -10,6 +10,7 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import { LoggerModule } from 'nestjs-pino';
 import { LoggerModule as AppLoggerModule } from './shared';
+import { PostersModule } from './modules/posters/posters.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { LoggerModule as AppLoggerModule } from './shared';
     SourcesModule,
     TrailersModule,
     AppLoggerModule,
+    PostersModule,
   ],
 })
 export class AppModule {}
