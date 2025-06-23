@@ -10,4 +10,8 @@ export class CoreMoviesService {
   async findAll(options: GetMoviesWithPaginateDto): Promise<MovieEntity[]> {
     return await this.repository.lookupMoviesWithPaginate(options);
   }
+
+  async count(): Promise<number>{
+    return await this.repository.count();
+  }
 }

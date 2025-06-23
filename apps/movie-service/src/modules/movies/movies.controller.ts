@@ -25,6 +25,8 @@ export class MoviesController {
     const limit = options.limit ?? 10;
 
     const movies = await this.service.findAll({ ...options, page, limit });
+    const count = await this.service.count();
+    const totalPages = Math.ceil(count / limit);
 
     return response({
       message: 'Movie list information was successfully received.',
@@ -32,12 +34,13 @@ export class MoviesController {
       meta: {
         currentPage: page,
         itemCount: limit,
-        totalItems: 0,
+        totalItems: count,
+        totalPages,
       },
       links: {
-        self: `/movies?page=${options.page}`,
-        next: `/movies?page=${options.page + 1}`,
-        perv: `/movies?page=${options.page - 1}`,
+        self: `/movies?page=${page}`,
+        next: page < totalPages ? `/movies?page=${page + 1}` : null,
+        perv: page > 1 ? `/movies?page=${page - 1}` : null,
       },
     });
   }
