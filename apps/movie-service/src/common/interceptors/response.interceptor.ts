@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Response } from 'express';
 import { map, Observable } from 'rxjs';
 
@@ -15,7 +15,7 @@ export class ResponseInterceptor implements NestInterceptor {
 
       return {
         statusCode: res.statusCode,
-        status: status ?? 'OK',
+        status: status || HttpStatus[res.statusCode],
         success: true,
         message,
         data,
