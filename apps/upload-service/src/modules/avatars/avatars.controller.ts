@@ -1,52 +1,37 @@
+import { createReadStream } from 'fs';
+import { Response } from 'express';
+
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   Body,
   Controller,
   Get,
   Param,
+  ParseFilePipe,
   ParseUUIDPipe,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseInterceptors,
+  Version,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ImagesService } from '../images/images.service';
-import { basename, join } from 'path';
-import { createReadStream } from 'fs';
-import { Response } from 'express';
 
-@Controller({
-  path: 'avatars',
-  version: '1',
-})
+import { AvatarsService } from './avatars.service';
+
+@Controller('avatars')
 export class AvatarsController {
-  constructor(private readonly imageService: ImagesService) {}
+  constructor(private readonly avatarService: AvatarsService) {}
 
-  @Get(':id')
+  @Get(':filename')
   async findOne(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('filename', ParseFilePipe) filename: string,
+    @Query('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ): Promise<Response> {
-    const image = await this.imageService.findById(id);
+    const image = await this.avatarService.findImage(filename, id);
 
-    if (!image) {
-      return res.status(404).json({
-        statusCode: 404,
-        status: 'NOT_FOUND',
-        success: false,
-        message: 'Image not found',
-      });
-    }
-
-    const filePath = join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'uploads',
-      'avatars',
-      basename(image.path),
-    );
+    const filePath = this.avatarService.getAvatarPath(image.path);
 
     const stream = createReadStream(filePath);
     res.set({
@@ -57,24 +42,21 @@ export class AvatarsController {
   }
 
   @Post('upload')
+  @Version('1')
   @UseInterceptors(FileInterceptor('file'))
   async upload(
     @UploadedFile() file: Express.Multer.File,
     @Body('owner') owner?: string,
   ): Promise<unknown> {
-    const image = await this.imageService.upload(file, {
-      usage: 'avatar',
-      path: join(__dirname, '..', '..', '..', 'uploads', 'avatars'),
-      ownerId: owner,
-      prefix: 'avatars',
-    });
+    const result = await this.avatarService.upload(file, owner);
+
     return {
       statusCode: 201,
       status: 'CREATED',
       success: true,
       message: 'Image uploaded successfully',
       data: {
-        attributes: image,
+        attributes: result,
       },
     };
   }
