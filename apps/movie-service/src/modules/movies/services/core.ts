@@ -5,10 +5,14 @@ import { MovieEntity } from '../entities/movies.entity';
 import { plainToInstance } from 'class-transformer';
 import { MovieResponseDto } from '../dto/response.dto';
 import { CreateMovieDto } from '../dto/create-movie.dto';
+import { PostersService } from 'src/modules/posters/posters.service';
 
 @Injectable()
 export class CoreMoviesService {
-  constructor(private readonly repository: MoviesRepository) {}
+  constructor(
+    private readonly repository: MoviesRepository,
+    private readonly postersService: PostersService,
+  ) {}
 
   async findAll(
     options: GetMoviesWithPaginateDto,
@@ -37,6 +41,7 @@ export class CoreMoviesService {
     const movie = await this.repository.create(data);
 
     if (data.posters) {
+      const poster = await this.postersService.create(data.posters);
     }
 
     if (data.sources) {

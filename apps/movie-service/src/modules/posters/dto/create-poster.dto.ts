@@ -32,3 +32,11 @@ export class CreatePosterDto {
   @IsNumber()
   size?: number;
 }
+
+export class AddPosterCommand {
+  fileId: string;
+  filename: string;
+  type: PosterTypeEnum;
+  mimetype?: string;
+  size?: number;
+}
