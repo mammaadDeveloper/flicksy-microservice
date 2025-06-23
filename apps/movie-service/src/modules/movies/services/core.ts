@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MoviesRepository } from './repository';
 import { GetMoviesWithPaginateDto } from '../dto/movies.dto';
 import { MovieEntity } from '../entities/movies.entity';
@@ -13,5 +13,14 @@ export class CoreMoviesService {
 
   async count(): Promise<number>{
     return await this.repository.count();
+  }
+
+  async findOne(slug: string){
+    const movie = await this.repository.findBySlug(slug);
+
+    if(!movie)
+      throw new NotFoundException('Movie not found');
+
+    return movie;
   }
 }

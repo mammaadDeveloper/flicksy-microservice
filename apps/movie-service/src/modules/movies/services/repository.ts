@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetMoviesWithPaginateDto } from '../dto/movies.dto';
-import { GetAllWithPaginateQuery, MovieCountQuery } from '../queries';
+import {
+  GetAllWithPaginateQuery,
+  GetMovieBySlugQuery,
+  MovieCountQuery,
+} from '../queries';
 import { MovieEntity } from '../entities/movies.entity';
 
 @Injectable()
@@ -15,6 +19,10 @@ export class MoviesRepository {
     options: GetMoviesWithPaginateDto,
   ): Promise<MovieEntity[]> {
     return await this.query.execute(new GetAllWithPaginateQuery(options));
+  }
+
+  async findBySlug(slug: string): Promise<MovieEntity | null> {
+    return await this.query.execute(new GetMovieBySlugQuery(slug));
   }
 
   async count(): Promise<number> {

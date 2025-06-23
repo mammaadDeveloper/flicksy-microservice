@@ -45,8 +45,13 @@ export class MoviesController {
     });
   }
 
-  @Get(':slub')
-  async find(
-    @Param('slug', new ParseUUIDPipe({ version: '4' })) slug: string,
-  ) {}
+  @Get(':slug')
+  async find(@Param('slug', new ParseUUIDPipe({version: '4'})) slug: string) {
+    const movie = await this.service.findOne(slug);
+
+    return response({
+      message: 'The movie information was successfully retrieved.',
+      data: { type: 'movie', attributes: movie },
+    });
+  }
 }
