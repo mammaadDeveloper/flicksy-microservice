@@ -26,7 +26,13 @@ export class AvatarsService {
   async upload(
     file: Express.Multer.File,
     owner?: string,
-  ): Promise<{ imageId: string; filename: string; url: string }> {
+  ): Promise<{
+    imageId: string;
+    filename: string;
+    mimetype: string;
+    size: number;
+    url: string;
+  }> {
     const image = await this.imageService.upload(file, {
       usage: 'avatar',
       path: join(__dirname, '..', '..', '..', 'uploads', 'avatars'),
@@ -39,6 +45,8 @@ export class AvatarsService {
     return {
       imageId: image.id,
       filename: image.filename,
+      mimetype: image.mimetype,
+      size: image.size,
       url: this.getAvatarUrl(image.filename, image.id),
     };
   }
