@@ -4,11 +4,17 @@ import { MovieEntity } from './entities/movies.entity';
 import { MoviesController } from './movies.controller';
 import { MoviesService } from './movies.service';
 import { CoreMoviesService } from './services/core';
+import { GetAllMoviesWithPaginateHandler } from './queries';
+import { MoviesRepository } from './services/repository';
+
+const commands = [];
+
+const queries = [GetAllMoviesWithPaginateHandler];
 
 @Module({
-    imports: [TypeOrmModule.forFeature([MovieEntity])],
-    controllers: [MoviesController],
-    providers: [MoviesService, CoreMoviesService],
-    exports: [MoviesService]
+  imports: [TypeOrmModule.forFeature([MovieEntity])],
+  controllers: [MoviesController],
+  providers: [...commands, ...queries, MoviesService, CoreMoviesService, MoviesRepository],
+  exports: [MoviesService],
 })
 export class MoviesModule {}
