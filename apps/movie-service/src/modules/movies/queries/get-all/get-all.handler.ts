@@ -20,6 +20,10 @@ export class GetAllMoviesWithPaginateHandler
     if (source) relations.push('sources');
     if (poster) relations.push('posters');
 
-    return await this.repository.find({ relations, take: limit, skip: (page - 1) * limit });
+    return await this.repository.find({
+      relations,
+      take: limit,
+      skip: (page - 1) * limit,
+    });
   }
 }

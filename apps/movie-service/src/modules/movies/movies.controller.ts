@@ -46,7 +46,7 @@ export class MoviesController {
   }
 
   @Get(':slug')
-  async find(@Param('slug', new ParseUUIDPipe({version: '4'})) slug: string) {
+  async find(@Param('slug', new ParseUUIDPipe({ version: '4' })) slug: string) {
     const movie = await this.service.findOne(slug);
 
     return response({

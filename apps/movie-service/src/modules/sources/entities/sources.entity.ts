@@ -21,7 +21,7 @@ export class SourceEntity {
   @Column({ default: 0 })
   size: number;
 
-  @Column({ name: 'file_id',nullable: true })
+  @Column({ name: 'file_id', nullable: true })
   file?: string;
 
   @Column({ type: 'simple-array', nullable: true })
@@ -36,9 +36,9 @@ export class SourceEntity {
   @JoinColumn({ name: 'movie_id' })
   movie: MovieEntity;
 
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at'})
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

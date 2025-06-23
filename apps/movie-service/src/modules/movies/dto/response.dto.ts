@@ -4,7 +4,7 @@ import { SourceEntity } from 'src/modules/sources/entities/sources.entity';
 import { TrailerEntity } from 'src/modules/trailers/entities/trailers.entity';
 
 export class MovieResponseDto {
-  @Expose({name: 'slug'})
+  @Expose({ name: 'slug' })
   id: string;
 
   @Expose()
@@ -25,7 +25,7 @@ export class MovieResponseDto {
   @Expose({ name: 'releaseDate' })
   released_date?: Date;
 
-  @Expose({name: 'createdAt'})
+  @Expose({ name: 'createdAt' })
   created_at: Date;
 
   @Expose()

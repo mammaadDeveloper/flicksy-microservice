@@ -43,7 +43,7 @@ export class MovieEntity {
   @OneToMany(() => TrailerEntity, (trailer) => trailer.movie)
   trailers: TrailerEntity[];
 
-  @OneToMany(() => PosterEntity, poster => poster.movie)
+  @OneToMany(() => PosterEntity, (poster) => poster.movie)
   posters: PosterEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
