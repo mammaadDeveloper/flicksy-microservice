@@ -7,8 +7,8 @@ export type ResourceObject<Attributes = any, Relationships = any> = {
 
 export type LinksObject = {
   self: string;
-  next: string;
-  perv: string;
+  next: string | null;
+  perv: string | null;
 };
 
 export type MetaObject = {
@@ -29,6 +29,6 @@ export interface ResponsePayload {
   links?: LinksObject;
 }
 
-export function response(payload: ResponsePayload) {
+export function response(payload: ResponsePayload): unknown {
   return { __formatted: true, ...payload };
 }

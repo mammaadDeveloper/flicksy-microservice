@@ -10,8 +10,9 @@ import {
   MovieCountHandler,
 } from './queries';
 import { MoviesRepository } from './services/repository';
+import { CreateMovieHandler } from './commands';
 
-const commands = [];
+const commands = [CreateMovieHandler];
 
 const queries = [
   GetAllMoviesWithPaginateHandler,

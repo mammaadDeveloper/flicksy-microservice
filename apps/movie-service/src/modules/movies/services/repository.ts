@@ -7,6 +7,8 @@ import {
   MovieCountQuery,
 } from '../queries';
 import { MovieEntity } from '../entities/movies.entity';
+import { AddMovieCommand, CreateMovieDto } from '../dto/create-movie.dto';
+import { CreateMovieCommand } from '../commands';
 
 @Injectable()
 export class MoviesRepository {
@@ -27,5 +29,9 @@ export class MoviesRepository {
 
   async count(): Promise<number> {
     return await this.query.execute(new MovieCountQuery());
+  }
+
+  async create(data: AddMovieCommand): Promise<MovieEntity> {
+    return await this.command.execute(new CreateMovieCommand(data));
   }
 }

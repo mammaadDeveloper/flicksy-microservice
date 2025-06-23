@@ -1,15 +1,18 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Post,
   Query,
 } from '@nestjs/common';
 import { CoreMoviesService } from './services/core';
 import { GetMoviesWithPaginateDto } from './dto/movies.dto';
 import { response } from 'src/shared';
+import { CreateMovieDto } from './dto/create-movie.dto';
 
 @Controller({
   version: '1',
@@ -20,7 +23,7 @@ export class MoviesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() options: GetMoviesWithPaginateDto) {
+  async findAll(@Query() options: GetMoviesWithPaginateDto): Promise<unknown> {
     const page = options.page ?? 1;
     const limit = options.limit ?? 10;
 
@@ -46,12 +49,24 @@ export class MoviesController {
   }
 
   @Get(':slug')
-  async find(@Param('slug', new ParseUUIDPipe({ version: '4' })) slug: string) {
+  async find(
+    @Param('slug', new ParseUUIDPipe({ version: '4' })) slug: string,
+  ): Promise<unknown> {
     const movie = await this.service.findOne(slug);
 
     return response({
       message: 'The movie information was successfully retrieved.',
       data: { type: 'movie', attributes: movie },
+    });
+  }
+
+  @Post()
+  async createMovie(@Body() body: CreateMovieDto): Promise<unknown> {
+    const movie = await this.service.createMovie(body);
+
+    return response({
+      message: 'The movie information was successfully recorded.',
+      data: { type: 'create movie', attributes: movie },
     });
   }
 }
