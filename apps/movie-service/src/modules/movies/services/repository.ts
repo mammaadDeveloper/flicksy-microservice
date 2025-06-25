@@ -7,8 +7,10 @@ import {
   MovieCountQuery,
 } from '../queries';
 import { MovieEntity } from '../entities/movies.entity';
-import { AddMovieCommand, CreateMovieDto } from '../dto/create-movie.dto';
-import { CreateMovieCommand } from '../commands';
+import { AddMovieCommand } from '../dto/create.dto';
+import { CreateMovieCommand, UpdateMovieCommand } from '../commands';
+import { UpdateResult } from 'typeorm';
+import { UpdateMovieDto } from '../dto/update.dto';
 
 @Injectable()
 export class MoviesRepository {
@@ -33,5 +35,9 @@ export class MoviesRepository {
 
   async create(data: AddMovieCommand): Promise<MovieEntity> {
     return await this.command.execute(new CreateMovieCommand(data));
+  }
+
+  async update(slug: string, data: UpdateMovieDto): Promise<UpdateResult> {
+    return await this.command.execute(new UpdateMovieCommand(slug, data));
   }
 }

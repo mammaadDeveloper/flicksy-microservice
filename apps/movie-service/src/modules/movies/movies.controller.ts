@@ -1,3 +1,6 @@
+import { response } from 'src/shared';
+
+/* eslint-disable no-constant-binary-expression */
 import {
   Body,
   Controller,
@@ -6,13 +9,15 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
+
 import { CoreMoviesService } from './services/core';
+import { UpdateMovieDto } from './dto/update.dto';
 import { GetMoviesWithPaginateDto } from './dto/movies.dto';
-import { response } from 'src/shared';
-import { CreateMovieDto } from './dto/create-movie.dto';
+import { CreateMovieDto } from './dto/create.dto';
 
 @Controller({
   version: '1',
@@ -67,6 +72,19 @@ export class MoviesController {
     return response({
       message: 'The movie information was successfully recorded.',
       data: { type: 'create movie', attributes, relationships },
+    });
+  }
+
+  @Patch(':slug')
+  async updateMovie(
+    @Param('slug', ParseUUIDPipe) slug: string,
+    @Body() body: UpdateMovieDto,
+  ): Promise<unknown> {
+    const result = await this.service.updateMovie(slug, body);
+
+    return response({
+      message: 'Movie updated successfully.',
+      data: { type: 'update movie', attributes: result },
     });
   }
 }

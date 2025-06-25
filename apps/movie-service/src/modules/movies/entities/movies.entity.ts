@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -10,6 +11,7 @@ import {
 import { TrailerEntity } from 'src/modules/trailers/entities/trailers.entity';
 import { SourceEntity } from 'src/modules/sources/entities/sources.entity';
 import { PosterEntity } from 'src/modules/posters/entities/posters.entity';
+import { v4 as uuidV4 } from 'uuid';
 
 @Entity('movies')
 export class MovieEntity {
@@ -54,4 +56,9 @@ export class MovieEntity {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
+
+  @BeforeInsert()
+  generateUUID(): void {
+    this.slug = uuidV4();
+  }
 }

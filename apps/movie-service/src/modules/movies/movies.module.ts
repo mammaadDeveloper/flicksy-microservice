@@ -10,12 +10,12 @@ import {
   MovieCountHandler,
 } from './queries';
 import { MoviesRepository } from './services/repository';
-import { CreateMovieHandler } from './commands';
+import { CreateMovieHandler, UpdateMovieHandler } from './commands';
 import { PostersModule } from '../posters/posters.module';
 import { SourcesModule } from '../sources/sources.module';
 import { TrailersModule } from '../trailers/trailers.module';
 
-const commands = [CreateMovieHandler];
+const commands = [CreateMovieHandler, UpdateMovieHandler];
 
 const queries = [
   GetAllMoviesWithPaginateHandler,

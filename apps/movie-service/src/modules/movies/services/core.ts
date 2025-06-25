@@ -1,14 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { MoviesRepository } from './repository';
 import { GetMoviesWithPaginateDto } from '../dto/movies.dto';
 import { MovieEntity } from '../entities/movies.entity';
 import { plainToInstance } from 'class-transformer';
 import { MovieResponseDto } from '../dto/response.dto';
-import { CreateMovieDto } from '../dto/create-movie.dto';
+import { CreateMovieDto } from '../dto/create.dto';
 import { PostersService } from 'src/modules/posters/posters.service';
 import { SourcesService } from 'src/modules/sources/sources.service';
 import { TrailersService } from 'src/modules/trailers/trailers.service';
+import { UpdateMovieDto } from '../dto/update.dto';
 
 @Injectable()
 export class CoreMoviesService {
@@ -75,5 +80,17 @@ export class CoreMoviesService {
         trailers,
       },
     };
+  }
+
+  async updateMovie(
+    slug: string,
+    data: UpdateMovieDto,
+  ): Promise<MovieResponseDto | MovieResponseDto[]> {
+    const result = await this.repository.update(slug, data);
+
+    if (result.affected === 0)
+      throw new InternalServerErrorException('Failed to update movie');
+
+    return await this.findOne(slug);
   }
 }

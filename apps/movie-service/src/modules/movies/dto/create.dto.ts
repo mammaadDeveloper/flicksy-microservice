@@ -15,9 +15,6 @@ import { CreateSourceDto } from '../../sources/dto/create-source.dto';
 import { CreateTrailerDto } from '../../trailers/dto/create-trailer.dto';
 
 export class CreateMovieDto {
-  @IsUUID()
-  slug: string;
-
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -60,7 +57,6 @@ export class CreateMovieDto {
 }
 
 export class AddMovieCommand {
-  slug: string;
   title: string;
   summary: string;
   description?: string;
