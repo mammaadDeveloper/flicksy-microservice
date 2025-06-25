@@ -1,18 +1,13 @@
+import { Expose } from 'class-transformer';
 import {
-  IsString,
-  IsNotEmpty,
-  IsUUID,
-  IsInt,
-  Min,
-  Max,
   IsDateString,
+  IsInt,
+  IsNotEmpty,
   IsOptional,
-  ValidateNested,
+  IsString,
+  Max,
+  Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { CreatePosterDto } from '../../posters/dto/create-poster.dto';
-import { CreateSourceDto } from '../../sources/dto/create-source.dto';
-import { CreateTrailerDto } from '../../trailers/dto/create-trailer.dto';
 
 export class CreateMovieDto {
   @IsString()
@@ -38,22 +33,7 @@ export class CreateMovieDto {
 
   @IsOptional()
   @IsDateString()
-  releaseDate?: string;
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreatePosterDto)
-  posters?: CreatePosterDto[];
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreateSourceDto)
-  sources?: CreateSourceDto[];
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreateTrailerDto)
-  trailers?: CreateTrailerDto[];
+  release_date?: string;
 }
 
 export class AddMovieCommand {
@@ -62,5 +42,7 @@ export class AddMovieCommand {
   description?: string;
   director: string;
   year: number;
+
+  @Expose({ name: 'release_date' })
   releaseDate?: string;
 }

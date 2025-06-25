@@ -53,33 +53,9 @@ export class CoreMoviesService {
 
   async createMovie(
     data: CreateMovieDto,
-  ): Promise<{ attributes: unknown; relationships: unknown }> {
-    const movie = this.format(await this.repository.create(data));
-
-    let posters;
-    let sources;
-    let trailers;
-
-    if (data.posters) {
-      posters = await this.postersService.create(data.posters);
-    }
-
-    if (data.sources) {
-      sources = await this.sourcesService.create(data.sources);
-    }
-
-    if (data.trailers) {
-      trailers = await this.trailersService.create(data.trailers);
-    }
-
-    return {
-      attributes: movie,
-      relationships: {
-        posters,
-        sources,
-        trailers,
-      },
-    };
+  ): Promise<MovieResponseDto | MovieResponseDto[]> {
+    const movie = await this.repository.create(data);
+    return this.format(movie);
   }
 
   async updateMovie(

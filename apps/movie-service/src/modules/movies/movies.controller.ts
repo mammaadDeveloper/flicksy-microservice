@@ -67,11 +67,11 @@ export class MoviesController {
 
   @Post()
   async createMovie(@Body() body: CreateMovieDto): Promise<unknown> {
-    const { attributes, relationships } = await this.service.createMovie(body);
+    const movie = await this.service.createMovie(body);
 
     return response({
       message: 'The movie information was successfully recorded.',
-      data: { type: 'create movie', attributes, relationships },
+      data: { type: 'create movie', attributes: movie },
     });
   }
 
