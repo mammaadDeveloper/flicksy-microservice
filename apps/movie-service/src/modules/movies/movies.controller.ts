@@ -1,6 +1,5 @@
 import { response } from 'src/shared';
 
-/* eslint-disable no-constant-binary-expression */
 import {
   Body,
   Controller,
@@ -30,7 +29,8 @@ export class MoviesController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query(new PaginationPipe()) options: GetMoviesWithPaginateDto,
+    @Query(new PaginationPipe())
+    options: GetMoviesWithPaginateDto,
   ): Promise<unknown> {
     const page = options.page ?? 1;
     const limit = options.limit ?? 10;
@@ -38,19 +38,24 @@ export class MoviesController {
     const movies = await this.service.findAll({
       ...options,
       page,
-      limit,
+      limit: options.limit,
     });
     const count = await this.service.count();
     const totalPages = Math.ceil(count / limit);
 
     return response({
       message: 'Movie list information was successfully received.',
-      data: { type: 'movies', attributes: movies },
+      data: {
+        type: 'movies',
+        attributes: movies,
+      },
       meta: {
-        currentPage: options.page,
-        itemCount: options.limit,
-        totalItems: count,
-        totalPages,
+        page: {
+          currentPage: options.page,
+          itemCount: options.limit,
+          totalItems: count,
+          totalPages,
+        },
       },
       links: {
         self: `/api/v1/movies?page=${page}`,
@@ -68,7 +73,11 @@ export class MoviesController {
 
     return response({
       message: 'The movie information was successfully retrieved.',
-      data: { type: 'movie', attributes: movie },
+      data: {
+        type: 'movie',
+        attributes: movie,
+        links: { self: `/api/v1/movies/${slug}` },
+      },
     });
   }
 

@@ -1,16 +1,20 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CqrsModule } from '@nestjs/cqrs';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { HealthModule } from './modules/health/health.module';
-import { MoviesModule } from './modules/movies/movies.module';
-import { SourcesModule } from './modules/sources/sources.module';
-import { TrailersModule } from './modules/trailers/trailers.module';
-import appConfig from './config/app.config';
-import databaseConfig from './config/database.config';
 import { LoggerModule } from 'nestjs-pino';
+
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { CqrsModule } from '@nestjs/cqrs';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module } from '@nestjs/common';
+
 import { LoggerModule as AppLoggerModule } from './shared';
+import { TrailersModule } from './modules/trailers/trailers.module';
+import { SourcesModule } from './modules/sources/sources.module';
 import { PostersModule } from './modules/posters/posters.module';
+import { MoviesModule } from './modules/movies/movies.module';
+import { HealthModule } from './modules/health/health.module';
+import databaseConfig from './config/database.config';
+import appConfig from './config/app.config';
 
 @Module({
   imports: [
@@ -45,6 +49,14 @@ import { PostersModule } from './modules/posters/posters.module';
         },
       },
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
     HealthModule,
     MoviesModule,
     SourcesModule,
@@ -52,5 +64,6 @@ import { PostersModule } from './modules/posters/posters.module';
     AppLoggerModule,
     PostersModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

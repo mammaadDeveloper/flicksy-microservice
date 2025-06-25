@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { json } from 'body-parser';
 import { RequestMethod, VersioningType } from '@nestjs/common';
 import { Logger as PinoLogger } from 'nestjs-pino';
-import { ResponseInterceptor } from './common';
+import { RateLimitMetaInterceptor, ResponseInterceptor } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -41,7 +42,10 @@ async function bootstrap() {
   });
 
   // Interceptor
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(
+    new ResponseInterceptor(),
+    new RateLimitMetaInterceptor(),
+  );
 
   const port = config.get<number>('app.port') ?? 3000;
   await app.listen(port);
