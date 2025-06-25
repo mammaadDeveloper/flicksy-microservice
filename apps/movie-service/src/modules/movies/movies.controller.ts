@@ -18,6 +18,7 @@ import { CoreMoviesService } from './services/core';
 import { UpdateMovieDto } from './dto/update.dto';
 import { GetMoviesWithPaginateDto } from './dto/movies.dto';
 import { CreateMovieDto } from './dto/create.dto';
+import { PaginationPipe } from 'src/common';
 
 @Controller({
   version: '1',
@@ -28,11 +29,17 @@ export class MoviesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() options: GetMoviesWithPaginateDto): Promise<unknown> {
-    const page = Number(options.page) ?? 1;
+  async findAll(
+    @Query(new PaginationPipe()) options: GetMoviesWithPaginateDto,
+  ): Promise<unknown> {
+    const page = options.page ?? 1;
     const limit = options.limit ?? 10;
 
-    const movies = await this.service.findAll({ ...options, page, limit });
+    const movies = await this.service.findAll({
+      ...options,
+      page,
+      limit,
+    });
     const count = await this.service.count();
     const totalPages = Math.ceil(count / limit);
 
@@ -40,8 +47,8 @@ export class MoviesController {
       message: 'Movie list information was successfully received.',
       data: { type: 'movies', attributes: movies },
       meta: {
-        currentPage: page,
-        itemCount: limit,
+        currentPage: options.page,
+        itemCount: options.limit,
         totalItems: count,
         totalPages,
       },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetAllWithPaginateQuery } from './get-all.query';
 import { MovieEntity } from '../../entities/movies.entity';
@@ -28,7 +29,6 @@ export class GetAllMoviesWithPaginateHandler
 
     return await this.repository.find({
       relations,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       take: limit,
       skip: (page - 1) * limit,
     });
