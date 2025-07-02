@@ -1,19 +1,26 @@
 import { MovieEntity } from 'src/modules/movies/entities/movies.entity';
 import { VideoEncodingEnum, VideoQualityEnum } from 'src/shared';
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
+  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
+import { v4 as uuidV4 } from 'uuid';
 
 @Entity('sources')
 export class SourceEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
+
+  @PrimaryColumn('uuid')
+  slug: string;
 
   @Column({ type: 'enum', enum: VideoQualityEnum })
   quality: VideoQualityEnum;
@@ -45,4 +52,12 @@ export class SourceEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @BeforeInsert()
+  setSlug(): void {
+    this.slug = uuidV4();
+  }
+
+  // @RelationId((source: SourceEntity) => source.movie)
+  // movieId: number;
 }

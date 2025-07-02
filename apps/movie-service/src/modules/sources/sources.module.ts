@@ -7,8 +7,11 @@ import { SourcesRepository } from './services/repository';
 import { CoreSources } from './services/core';
 import { SourcesController } from './sources.controller';
 import { MoviesModule } from '../movies/movies.module';
+import { FindSourceByMovieSlugHandler } from './queries';
 
 const commands = [CreateSourceHandler];
+
+const queries = [FindSourceByMovieSlugHandler];
 
 @Module({
   imports: [
@@ -16,7 +19,13 @@ const commands = [CreateSourceHandler];
     forwardRef(() => MoviesModule),
   ],
   controllers: [SourcesController],
-  providers: [...commands, SourcesService, SourcesRepository, CoreSources],
+  providers: [
+    ...commands,
+    ...queries,
+    SourcesService,
+    SourcesRepository,
+    CoreSources,
+  ],
   exports: [SourcesService],
 })
 export class SourcesModule {}
