@@ -28,7 +28,14 @@ export class PostersCoreService implements FormatterInterface {
 
     if (!movie) throw new NotFoundException('Movie not found');
 
-    return movie.posters;
+    const posters = await this.repository.byMovie(movie.slug);
+
+    if (posters.length === 0)
+      throw new NotFoundException(
+        'The requested movie posters were not found.',
+      );
+
+    return posters;
   }
 
   async count(): Promise<number> {

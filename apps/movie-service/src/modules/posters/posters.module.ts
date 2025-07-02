@@ -9,10 +9,15 @@ import { PostersController } from './posters.controller';
 import { MoviesModule } from '../movies/movies.module';
 import { GetAllPostersHandler } from './queries';
 import { PosterCountHandler } from './queries/count/count.handler';
+import { GetByMovieSlugHandler } from './queries/get-by-movie/get-by-movie.handler';
 
 const commands = [CreatePosterHandler];
 
-const queries = [GetAllPostersHandler, PosterCountHandler];
+const queries = [
+  GetAllPostersHandler,
+  PosterCountHandler,
+  GetByMovieSlugHandler,
+];
 @Module({
   imports: [
     TypeOrmModule.forFeature([PosterEntity]),

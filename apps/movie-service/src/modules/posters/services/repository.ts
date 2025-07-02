@@ -6,6 +6,7 @@ import { PosterEntity } from '../entities/posters.entity';
 import { GetAllPostersQuery } from '../queries';
 import { PaginateDto } from 'src/common';
 import { PosterCountQuery } from '../queries/count/count.query';
+import { GetByMovieSlugQuery } from '../queries/get-by-movie/get-by-movie.query';
 
 @Injectable()
 export class PosterRepository {
@@ -26,5 +27,9 @@ export class PosterRepository {
 
   async count(): Promise<number> {
     return await this.query.execute(new PosterCountQuery());
+  }
+
+  async byMovie(slug: string): Promise<PosterEntity[]> {
+    return await this.query.execute(new GetByMovieSlugQuery(slug));
   }
 }
