@@ -9,7 +9,7 @@ export class SourcesRepository {
   constructor(private readonly command: CommandBus) {}
 
   async create(
-    data: AddSourceCommand[],
+    data: AddSourceCommand | AddSourceCommand[],
   ): Promise<SourceEntity | SourceEntity[]> {
     return await this.command.execute(new CreateSourceCommand(data));
   }

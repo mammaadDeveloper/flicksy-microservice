@@ -5,13 +5,18 @@ import {
   IsNumber,
   IsArray,
   ArrayUnique,
+  IsNotEmpty,
+  IsUUID,
 } from 'class-validator';
-import { VideoQualityEnum } from 'src/shared';
+import { MovieEntity } from 'src/modules/movies/entities/movies.entity';
+import { VideoEncodingEnum, VideoQualityEnum } from 'src/shared';
 
 export class CreateSourceDto {
+  @IsNotEmpty()
   @IsEnum(VideoQualityEnum)
   quality: VideoQualityEnum;
 
+  @IsNotEmpty()
   @IsNumber()
   size: number;
 
@@ -26,8 +31,12 @@ export class CreateSourceDto {
   subtileFileIds?: string[];
 
   @IsOptional()
-  @IsString()
-  encoding?: string;
+  @IsEnum(VideoEncodingEnum)
+  encoding?: VideoEncodingEnum;
+
+  @IsNotEmpty()
+  @IsUUID()
+  movieId: string;
 }
 
 export class AddSourceCommand {
@@ -35,5 +44,6 @@ export class AddSourceCommand {
   size: number;
   file?: string;
   subtileFileIds?: string[];
-  encoding?: string;
+  encoding?: VideoEncodingEnum;
+  movie?: MovieEntity;
 }

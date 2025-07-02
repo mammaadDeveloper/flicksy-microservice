@@ -1,15 +1,22 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SourceEntity } from './entities/sources.entity';
 import { CreateSourceHandler } from './commands';
 import { SourcesService } from './sources.service';
 import { SourcesRepository } from './services/repository';
+import { CoreSources } from './services/core';
+import { SourcesController } from './sources.controller';
+import { MoviesModule } from '../movies/movies.module';
 
 const commands = [CreateSourceHandler];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SourceEntity])],
-  providers: [...commands, SourcesService, SourcesRepository],
+  imports: [
+    TypeOrmModule.forFeature([SourceEntity]),
+    forwardRef(() => MoviesModule),
+  ],
+  controllers: [SourcesController],
+  providers: [...commands, SourcesService, SourcesRepository, CoreSources],
   exports: [SourcesService],
 })
 export class SourcesModule {}

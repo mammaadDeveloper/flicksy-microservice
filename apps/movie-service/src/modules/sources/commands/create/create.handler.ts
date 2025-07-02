@@ -19,13 +19,15 @@ export class CreateSourceHandler
   async execute(
     command: CreateSourceCommand,
   ): Promise<SourceEntity | SourceEntity[]> {
+    const { data } = command;
+    const raw = Array.isArray(data) ? data : [data];
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const sources = command.data.map((item) =>
+      const sources = raw.map((item) =>
         queryRunner.manager.create(SourceEntity, item),
       );
 

@@ -27,7 +27,7 @@ const queries = [
   imports: [
     TypeOrmModule.forFeature([MovieEntity]),
     forwardRef(() => PostersModule),
-    SourcesModule,
+    forwardRef(() => SourcesModule),
     TrailersModule,
   ],
   controllers: [MoviesController],

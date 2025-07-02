@@ -1,5 +1,5 @@
 import { MovieEntity } from 'src/modules/movies/entities/movies.entity';
-import { VideoQualityEnum } from 'src/shared';
+import { VideoEncodingEnum, VideoQualityEnum } from 'src/shared';
 import {
   Column,
   CreateDateColumn,
@@ -27,8 +27,12 @@ export class SourceEntity {
   @Column({ type: 'simple-array', nullable: true })
   subtileFileIds: string[];
 
-  @Column({ nullable: true })
-  encoding: string;
+  @Column({
+    type: 'enum',
+    enum: VideoEncodingEnum,
+    default: VideoEncodingEnum.H264,
+  })
+  encoding: VideoEncodingEnum;
 
   @ManyToOne(() => MovieEntity, (movie) => movie.sources, {
     onDelete: 'CASCADE',

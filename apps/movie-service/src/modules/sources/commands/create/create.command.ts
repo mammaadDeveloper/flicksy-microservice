@@ -5,7 +5,7 @@ import { AddSourceCommand } from '../../dto/create-source.dto';
 export class CreateSourceCommand extends Command<
   SourceEntity | SourceEntity[]
 > {
-  constructor(public readonly data: AddSourceCommand[]) {
+  constructor(public readonly data: AddSourceCommand | AddSourceCommand[]) {
     super();
   }
 }
