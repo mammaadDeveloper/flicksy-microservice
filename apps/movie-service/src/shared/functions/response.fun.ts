@@ -16,6 +16,8 @@ export type LinksObject = {
   self: string;
   next: string | null;
   perv: string | null;
+  first?: string | null;
+  last?: string | null;
 };
 
 export type MetaObject = {

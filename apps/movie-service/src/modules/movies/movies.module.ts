@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MovieEntity } from './entities/movies.entity';
 import { MoviesController } from './movies.controller';
@@ -26,7 +26,7 @@ const queries = [
 @Module({
   imports: [
     TypeOrmModule.forFeature([MovieEntity]),
-    PostersModule,
+    forwardRef(() => PostersModule),
     SourcesModule,
     TrailersModule,
   ],
